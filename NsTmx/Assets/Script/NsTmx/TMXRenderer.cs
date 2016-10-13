@@ -8,16 +8,16 @@ using TmxCSharp.Renderer;
 using XmlParser;
 
 // TMX地图渲染
-public class TMXRenderer : MonoBehaviour, ITmxTileDataParent, ITmxLoader
+public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 {
 
-    public bool LoadMapFromFile(string fileName)
+	public bool LoadMapFromFile(string fileName, ITmxLoader loader)
     {
         Clear();
-        if (string.IsNullOrEmpty(fileName))
+		if (string.IsNullOrEmpty(fileName) || loader == null)
             return false;
 
-        TileMap tileMap = TmxLoader.Parse(fileName, this);
+		TileMap tileMap = TmxLoader.Parse(fileName, loader);
 
         bool ret = tileMap != null && tileMap.IsVaild;
         if (ret)
@@ -245,7 +245,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent, ITmxLoader
     void Start()
     {
         // 测试
-        LoadMapFromFile("maps/@testtmx/d104.tmx.bytes");
+     //   LoadMapFromFile("maps/@testtmx/d104.tmx.bytes");
     }
 
     public TileMap Tile
