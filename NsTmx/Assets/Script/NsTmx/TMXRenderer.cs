@@ -172,8 +172,6 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         mesh.Clear();
 
         // 设置顶点
-        int colCnt = (m_TileMap.Size.Width + 1);
-        int rowCnt = (m_TileMap.Size.Height + 1);
         List<Vector3> vertList = new List<Vector3>();
         List<Vector2> uvList = new List<Vector2>();
         List<int> indexList = new List<int>();

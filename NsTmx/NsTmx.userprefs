@@ -1,0 +1,18 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\NsTmx\TMXRenderer.cs">
+    <Files>
+      <File FileName="Assets\Script\NsTmx\TMXRenderer.cs" Line="69" Column="6" />
+      <File FileName="Assets\Script\NsTmx\Loader\TmxLoader.cs" Line="12" Column="41" />
+      <File FileName="Assets\Script\NsTmx\TMXRenderData.cs" Line="64" Column="23" />
+      <File FileName="Assets\Script\NsTmx\Loader\MapLayerLoader.cs" Line="23" Column="14" />
+      <File FileName="Assets\Script\NsTmx\Loader\TileIdLoader.cs" Line="153" Column="14" />
+      <File FileName="Assets\Script\NsTmx\Loader\TileSetLoader.cs" Line="84" Column="19" />
+      <File FileName="Assets\Script\NsTmx\Models\TileMap.cs" Line="29" Column="14" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
