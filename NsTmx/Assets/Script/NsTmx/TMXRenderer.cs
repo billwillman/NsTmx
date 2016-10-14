@@ -75,9 +75,10 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         }
     }
 
-    private void AddVertex(int x, int y, int height, int tileId, TileSet tile,
-                           List<Vector3> vertList, List<Vector2> uvList, List<int> indexList,
-                           Dictionary<KeyValuePair<int, int>, int> XYToVertIdx)
+    private void AddVertex(int col, int row, int height, int tileId, TileSet tile,
+                           List<Vector3> vertList, List<Vector2> uvList, List<int> indexList
+                          // ,Dictionary<KeyValuePair<int, int>, int> XYToVertIdx
+                          )
 
     {
         int tileColCnt = Mathf.CeilToInt(tile.Image.Width / tile.TileWidth);
@@ -88,62 +89,68 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         float uvY = (float)(r) * uvPerY;
         float uvX = (float)(c) * uvPerX;
 
-        int x1 = x + tile.TileWidth;
-        int y1 = y + tile.TileHeight;
+        float x0 = (float)(col * tile.TileWidth);
+        float y0 = (float)((height - row - 1) * tile.TileHeight);
+        float x1 = x0 + tile.TileWidth;
+        float y1 = y0 + tile.TileHeight;
+        float uvX0 = uvX;
+        float uvX1 = uvX + uvPerX;
+        float uvY0 = 1f - uvY - uvPerY;
+        float uvY1 = 1f - uvY;
 
         // left, top
         int vertIdx;
-        KeyValuePair<int, int> key = new KeyValuePair<int, int>(x, y);
-        if (!XYToVertIdx.TryGetValue(key, out vertIdx))
+    //    KeyValuePair<int, int> key = new KeyValuePair<int, int>(x, y);
+     //   if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
-            Vector3 vec = new Vector3(x, y, height);
+            Vector3 vec = new Vector3(x0, y0, height);
             vertList.Add(vec);
-            XYToVertIdx.Add(key, vertIdx);
+      //      XYToVertIdx.Add(key, vertIdx);
 
-            Vector2 uv = new Vector2(uvX, uvY);
+            Vector2 uv = new Vector2(uvX0, uvY0);
             uvList.Add(uv);
         }
         indexList.Add(vertIdx);
 
         // left, bottom
-        key = new KeyValuePair<int, int>(x, y1);
-        if (!XYToVertIdx.TryGetValue(key, out vertIdx))
+      //  key = new KeyValuePair<int, int>(x, y1);
+    //    if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
-            Vector3 vec = new Vector3(x, y1, height);
+            Vector3 vec = new Vector3(x0, y1, height);
             vertList.Add(vec);
-            XYToVertIdx.Add(key, vertIdx);
+     //       XYToVertIdx.Add(key, vertIdx);
 
-			Vector2 uv = new Vector2(uvX, uvY + uvPerY);
+			Vector2 uv = new Vector2(uvX0, uvY1);
             uvList.Add(uv);
         }
         indexList.Add(vertIdx);
 
         // right, bottom
-        key = new KeyValuePair<int, int>(x1, y1);
-        if (!XYToVertIdx.TryGetValue(key, out vertIdx))
+    //    key = new KeyValuePair<int, int>(x1, y1);
+   //     if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
             Vector3 vec = new Vector3(x1, y1, height);
             vertList.Add(vec);
-            XYToVertIdx.Add(key, vertIdx);
+    //        XYToVertIdx.Add(key, vertIdx);
 
-            Vector2 uv = new Vector2(uvX + uvPerX, uvY + uvPerY);
+            Vector2 uv = new Vector2(uvX1, uvY1);
             uvList.Add(uv);
         }
         indexList.Add(vertIdx);
 
         // right, top
-        key = new KeyValuePair<int, int>(x1, y);
-        if (!XYToVertIdx.TryGetValue(key, out vertIdx))
+    //    key = new KeyValuePair<int, int>(x1, y);
+    //    if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
-            Vector3 vec = new Vector3(x1, y, height);
+            Vector3 vec = new Vector3(x1, y0, height);
 			vertList.Add(vec);
-            XYToVertIdx.Add(key, vertIdx);
+    //        XYToVertIdx.Add(key, vertIdx);
 
-            Vector2 uv = new Vector2(uvX + uvPerX, uvY);
+            Vector2 uv = new Vector2(uvX1, uvY0);
             uvList.Add(uv);
         }
         indexList.Add(vertIdx);
@@ -169,7 +176,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
             TmxTileData tmxData = matIter.Current.Value;
             if (tmxData == null || tmxData.Tile == null || !tmxData.Tile.IsVaid)
                 continue;
-
+            
             XYToVertIdx.Clear();
 			List<int> indexList = null;
            
@@ -181,20 +188,17 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
                 for (int r = 0; r < layer.Height; ++r)
                 {
-                    int y = r * tmxData.Tile.TileHeight;
-
                     for (int c = 0; c < layer.Width; ++c)
                     {
                         int tileId = layer.TileIds[r, c];
                         if (!tmxData.Tile.ContainsTile(tileId))
                             continue;
-                        int x = c * tmxData.Tile.TileWidth;	
 
 						if (indexList == null)
 							indexList = new List<int>();
 
 						tileId = tileId - 1;
-                        AddVertex(x, y, layer.Height, tileId, tmxData.Tile, vertList, uvList, indexList, XYToVertIdx);
+                        AddVertex(c, r, layer.Height, tileId, tmxData.Tile, vertList, uvList, indexList/*, XYToVertIdx*/);
                       
                     }
                 }
