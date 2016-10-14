@@ -102,7 +102,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         float uvY0 = 1f - uvY - uvPerY;
         float uvY1 = 1f - uvY;
 
-		float z = -layerIdx;
+		float z = -layerIdx * 0.01f;
 
         // left, top
         int vertIdx;
