@@ -193,6 +193,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 						if (indexList == null)
 							indexList = new List<int>();
 
+						tileId = tileId - 1;
                         AddVertex(x, y, layer.Height, tileId, tmxData.Tile, vertList, uvList, indexList, XYToVertIdx);
                       
                     }
