@@ -14,6 +14,7 @@ namespace TmxCSharp.Loader
             if (tileSets == null || tileSets.Count <= 0)
                 return null;
 
+			// not support link tsx
             IList<TileSet> list = null;
             for (int i = 0; i < tileSets.Count; ++i)
             {

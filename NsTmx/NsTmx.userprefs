@@ -2,17 +2,22 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\NsTmx\TMXRenderer.cs">
     <Files>
-      <File FileName="Assets\Script\NsTmx\TMXRenderer.cs" Line="69" Column="6" />
-      <File FileName="Assets\Script\NsTmx\Loader\TmxLoader.cs" Line="12" Column="41" />
+      <File FileName="Assets\Script\NsTmx\TMXRenderer.cs" Line="7" Column="26" />
+      <File FileName="Assets\Script\ResLoader.cs" Line="37" Column="1" />
+      <File FileName="Assets\Script\NsTmx\Loader\TmxLoader.cs" Line="24" Column="3" />
       <File FileName="Assets\Script\NsTmx\TMXRenderData.cs" Line="64" Column="23" />
-      <File FileName="Assets\Script\NsTmx\Loader\MapLayerLoader.cs" Line="23" Column="14" />
-      <File FileName="Assets\Script\NsTmx\Loader\TileIdLoader.cs" Line="153" Column="14" />
-      <File FileName="Assets\Script\NsTmx\Loader\TileSetLoader.cs" Line="84" Column="19" />
-      <File FileName="Assets\Script\NsTmx\Models\TileMap.cs" Line="29" Column="14" />
+      <File FileName="Assets\Script\NsTmx\Loader\MapLayerLoader.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\NsTmx\Loader\TileIdLoader.cs" Line="189" Column="45" />
+      <File FileName="Assets\Script\NsTmx\Loader\TileSetLoader.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\NsTmx\Models\TileMap.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="D:\NsTmx\NsTmx\Assets\Script\ResLoader.cs" line="29" column="1" />
+      <Breakpoint file="D:\NsTmx\NsTmx\Assets\Script\ResLoader.cs" line="42" column="1" />
+      <Breakpoint file="D:\NsTmx\NsTmx\Assets\Script\NsTmx\TMXRenderer.cs" line="16" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

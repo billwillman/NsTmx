@@ -20,7 +20,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 	{
 		if (m_Renderer != null)
 		{
-			m_Renderer.LoadMapFromFile("tmx/minimalist.tmx", this);
+			m_Renderer.LoadMapFromFile("tmx/TiledSupport-1.tmx", this);
 		}
 	}
 
@@ -28,7 +28,6 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 	{
 		if (string.IsNullOrEmpty(fileName))
 			return string.Empty;
-		fileName = Path.GetFileNameWithoutExtension(fileName);
 		if (string.IsNullOrEmpty(fileName))
 			return string.Empty;
 		TextAsset text = Resources.Load<TextAsset>(fileName);
@@ -42,7 +41,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 	{
 		if (string.IsNullOrEmpty(fileName))
 			return null;
-		fileName = Path.GetFileNameWithoutExtension(fileName);
+		fileName = Path.ChangeExtension(fileName, "");
 		if (string.IsNullOrEmpty(fileName))
 			return null;
 		Texture ret = Resources.Load<Texture>(fileName);
