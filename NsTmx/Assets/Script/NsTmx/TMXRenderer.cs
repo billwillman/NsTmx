@@ -115,7 +115,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
             vertList.Add(vec);
             XYToVertIdx.Add(key, vertIdx);
 
-            Vector2 uv = new Vector2(uvX + uvPerX, uvY);
+			Vector2 uv = new Vector2(uvX, uvY + uvPerY);
             uvList.Add(uv);
         }
         indexList.Add(vertIdx);
