@@ -24,7 +24,6 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
             m_TileMap = tileMap;
             m_ResRootPath = Path.GetDirectoryName(fileName);
             LoadRes(tileMap);
-            BuildMesh();
         }
 
         return ret;
@@ -75,28 +74,35 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         }
     }
 
-    private void AddVertex(int col, int row, int layerHeight, int baseTileWidth, int tileId, TileSet tile,
+	private void AddVertex(int col, int row, 
+						   int layerIdx, int layerWidth, int layerHeight, 
+						   int baseTileWidth, int baseTileHeight, 
+						   int tileId, TileSet tile,
                            List<Vector3> vertList, List<Vector2> uvList, List<int> indexList
                           // ,Dictionary<KeyValuePair<int, int>, int> XYToVertIdx
                           )
 
     {
-		int tileColCnt = Mathf.CeilToInt(tile.Image.Width / baseTileWidth);
-        int r = tileId / tileColCnt;
-        int c = tileId % tileColCnt;
+		tileId = tileId - tile.FirstId;
+
+		int tileColCnt = Mathf.CeilToInt(tile.Image.Width / tile.TileWidth);
+		int r = tileId / tileColCnt;
+		int c = tileId % tileColCnt;
 		float uvPerY = ((float)tile.TileHeight) / ((float)tile.Image.Height);
 		float uvPerX = ((float)tile.TileWidth) / ((float)tile.Image.Width);
         float uvY = (float)(r) * uvPerY;
         float uvX = (float)(c) * uvPerX;
 
-        float x0 = (float)(col * tile.TileWidth);
-		float y0 = (float)((layerHeight - row - 1) * tile.TileHeight);
-		float x1 = x0 + tile.TileWidth;
-		float y1 = y0 + tile.TileHeight;
+		float x0 = (float)(col * baseTileWidth) * 0.01f;
+		float y0 = ((float)((layerHeight - row) * baseTileHeight -  tile.TileHeight)) * 0.01f;
+		float x1 = x0 + tile.TileWidth * 0.01f;
+		float y1 = y0 + tile.TileHeight * 0.01f;
         float uvX0 = uvX;
         float uvX1 = uvX + uvPerX;
         float uvY0 = 1f - uvY - uvPerY;
         float uvY1 = 1f - uvY;
+
+		float z = -layerIdx;
 
         // left, top
         int vertIdx;
@@ -104,7 +110,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
      //   if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
-			Vector3 vec = new Vector3(x0, y0, layerHeight);
+			Vector3 vec = new Vector3(x0, y0, z);
             vertList.Add(vec);
       //      XYToVertIdx.Add(key, vertIdx);
 
@@ -118,7 +124,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
     //    if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
-			Vector3 vec = new Vector3(x0, y1, layerHeight);
+			Vector3 vec = new Vector3(x0, y1, z);
             vertList.Add(vec);
      //       XYToVertIdx.Add(key, vertIdx);
 
@@ -132,7 +138,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
    //     if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
-			Vector3 vec = new Vector3(x1, y1, layerHeight);
+			Vector3 vec = new Vector3(x1, y1, z);
             vertList.Add(vec);
     //        XYToVertIdx.Add(key, vertIdx);
 
@@ -146,7 +152,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
     //    if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
-			Vector3 vec = new Vector3(x1, y0, layerHeight);
+			Vector3 vec = new Vector3(x1, y0, z);
 			vertList.Add(vec);
     //        XYToVertIdx.Add(key, vertIdx);
 
@@ -155,6 +161,14 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         }
         indexList.Add(vertIdx);
     }
+
+	// 根据摄影机生成TILE
+	public void BuildMesh(Camera camera)
+	{
+		if (camera == null)
+			return;
+		
+	}
 
     // 全部到Mesh
     public void BuildAllToMesh(Mesh mesh)
@@ -198,9 +212,11 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
 						if (indexList == null)
 							indexList = new List<int>();
-
-						tileId = tileId - 1;
-						AddVertex(c, r, layer.Height, m_TileMap.Size.TileWidth, tileId, tmxData.Tile, vertList, uvList, indexList/*, XYToVertIdx*/);
+						
+						AddVertex(c, r, l, layer.Width, layer.Height, 
+								m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
+								tileId, tmxData.Tile, 
+								vertList, uvList, indexList/*, XYToVertIdx*/);
                       
                     }
                 }
@@ -231,12 +247,6 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
 		mesh.RecalculateBounds();
 		mesh.UploadMeshData(true);
-    }
-
-    // 生成显示区域东东
-    private void BuildMesh()
-    {
-            
     }
 
     public string ResRootPath
