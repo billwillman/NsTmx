@@ -10,7 +10,6 @@ using XmlParser;
 // TMX地图渲染
 public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 {
-
 	public bool LoadMapFromFile(string fileName, ITmxLoader loader)
     {
         Clear();
@@ -30,20 +29,6 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
         return ret;
     }
-
-	public string _LoadMapXml(string fileName)
-	{
-		return string.Empty;
-	}
-
-	public Texture _LoadTexture(string fileName)
-	{
-		return null;
-	}
-
-	public void _DestroyResource(UnityEngine.Object res)
-	{
-	}
 
     private void Clear()
     {
@@ -155,6 +140,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         {
             vertIdx = vertList.Count;
             Vector3 vec = new Vector3(x1, y, height);
+			vertList.Add(vec);
             XYToVertIdx.Add(key, vertIdx);
 
             Vector2 uv = new Vector2(uvX + uvPerX, uvY);
@@ -174,11 +160,9 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         // 设置顶点
         List<Vector3> vertList = new List<Vector3>();
         List<Vector2> uvList = new List<Vector2>();
-        List<int> indexList = new List<int>();
+		List<List<int>> indexLists = new List<List<int>>();
         Dictionary<KeyValuePair<int, int>, int> XYToVertIdx = new Dictionary<KeyValuePair<int, int>, int>();
-
-        // 每个材质一个SubMesh
-        int subMesh = 0;
+	
         var matIter = m_TileDataMap.GetEnumerator();
         while (matIter.MoveNext())
         {
@@ -187,7 +171,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
                 continue;
 
             XYToVertIdx.Clear();
-            indexList.Clear();
+			List<int> indexList = null;
            
             for (int l = 0; l < m_TileMap.Layers.Count; ++l)
             {
@@ -204,17 +188,21 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
                         int tileId = layer.TileIds[r, c];
                         if (!tmxData.Tile.ContainsTile(tileId))
                             continue;
-                        int x = c * tmxData.Tile.TileWidth;
+                        int x = c * tmxData.Tile.TileWidth;	
+
+						if (indexList == null)
+							indexList = new List<int>();
+
                         AddVertex(x, y, layer.Height, tileId, tmxData.Tile, vertList, uvList, indexList, XYToVertIdx);
                       
                     }
                 }
             }
 
-            if (indexList.Count > 0)
+			if (indexList != null && indexList.Count > 0)
             {
                 // 添加SUBMESH
-                mesh.SetIndices(indexList.ToArray(), MeshTopology.Quads, subMesh++);
+				indexLists.Add(indexList);
             }
 
         }
@@ -224,6 +212,18 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         mesh.SetVertices(vertList);
         // 设置UV
         mesh.SetUVs(0, uvList);
+
+		mesh.subMeshCount = indexLists.Count;
+		int subMesh = 0;
+		for (int i = 0; i < indexLists.Count; ++i)
+		{
+			var indexList = indexLists[i];
+			if (indexList != null && indexList.Count > 0)
+				mesh.SetIndices(indexList.ToArray(), MeshTopology.Quads, subMesh++);
+		}
+
+		mesh.RecalculateBounds();
+		mesh.UploadMeshData(true);
     }
 
     // 生成显示区域东东
