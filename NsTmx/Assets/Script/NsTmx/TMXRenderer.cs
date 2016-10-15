@@ -90,17 +90,18 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 		int c = tileId % tileColCnt;
 		float uvPerY = ((float)tile.TileHeight) / ((float)tile.Image.Height);
 		float uvPerX = ((float)tile.TileWidth) / ((float)tile.Image.Width);
-        float uvY = (float)(r) * uvPerY;
+        float uvY = 1f - (float)(r) * uvPerY;
         float uvX = (float)(c) * uvPerX;
 
 		float x0 = (float)(col * baseTileWidth) * 0.01f;
-		float y0 = ((float)((layerHeight - row) * baseTileHeight -  tile.TileHeight)) * 0.01f;
+		//float y0 = ((float)((layerHeight - row) * baseTileHeight -  tile.TileHeight)) * 0.01f;
+		float y0 = -((float)row) * baseTileHeight * 0.01f; 
 		float x1 = x0 + tile.TileWidth * 0.01f;
-		float y1 = y0 + tile.TileHeight * 0.01f;
+		float y1 = y0 - tile.TileHeight * 0.01f;
         float uvX0 = uvX;
         float uvX1 = uvX + uvPerX;
-        float uvY0 = 1f - uvY - uvPerY;
-        float uvY1 = 1f - uvY;
+        float uvY0 = uvY;
+		float uvY1 = uvY - uvPerY;
 
 		float z = -layerIdx * 0.01f;
 
@@ -119,16 +120,16 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         }
         indexList.Add(vertIdx);
 
-        // left, bottom
+        // right, top
       //  key = new KeyValuePair<int, int>(x, y1);
     //    if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
-			Vector3 vec = new Vector3(x0, y1, z);
+			Vector3 vec = new Vector3(x1, y0, z);
             vertList.Add(vec);
      //       XYToVertIdx.Add(key, vertIdx);
 
-			Vector2 uv = new Vector2(uvX0, uvY1);
+			Vector2 uv = new Vector2(uvX1, uvY0);
             uvList.Add(uv);
         }
         indexList.Add(vertIdx);
@@ -147,16 +148,16 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         }
         indexList.Add(vertIdx);
 
-        // right, top
+        // left, bottom
     //    key = new KeyValuePair<int, int>(x1, y);
     //    if (!XYToVertIdx.TryGetValue(key, out vertIdx))
         {
             vertIdx = vertList.Count;
-			Vector3 vec = new Vector3(x1, y0, z);
+			Vector3 vec = new Vector3(x0, y1, z);
 			vertList.Add(vec);
     //        XYToVertIdx.Add(key, vertIdx);
 
-            Vector2 uv = new Vector2(uvX1, uvY0);
+            Vector2 uv = new Vector2(uvX0, uvY1);
             uvList.Add(uv);
         }
         indexList.Add(vertIdx);
