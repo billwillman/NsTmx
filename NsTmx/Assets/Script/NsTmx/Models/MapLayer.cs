@@ -1,5 +1,12 @@
 ﻿namespace TmxCSharp.Models
 {
+	public struct TileIdData
+	{
+		public int tileId;
+		public bool isFlipX;
+		public bool isFlipY;
+	}
+
     public class MapLayer
     {
         public MapLayer(string name, int width, int height)
@@ -10,7 +17,7 @@
 
             Height = height;
 
-            TileIds = new int[Height, Width];
+			TileIds = new TileIdData[Height, Width];
         }
 
         public bool IsVaild
@@ -27,6 +34,6 @@
 
         public int Height { get; private set; }
 
-        public int[,] TileIds { get; private set; }
+		public TileIdData[,] TileIds { get; private set; }
     }
 }

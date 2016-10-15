@@ -68,14 +68,14 @@ namespace TmxCSharp.Loader
             }
         }
 
-        private IList<int> GetMapIdsFromBase64(string value, string compression)
+		private IList<TileIdData> GetMapIdsFromBase64(string value, string compression)
         {
             return GetMapIdsFromBytes(Decompression.Decompress(compression, Convert.FromBase64String(value)));
         }
 
-        private IList<int> GetMapIdsFromXml(XMLNodeList tiles)
+		private IList<TileIdData> GetMapIdsFromXml(XMLNodeList tiles)
         {
-            IList<int> ret = null;
+			IList<TileIdData> ret = null;
 
             for (int i = 0; i < tiles.Count; ++i)
             {
@@ -89,16 +89,18 @@ namespace TmxCSharp.Loader
                 if (!int.TryParse(s, out gid))
                     continue;
                 if (ret == null)
-                    ret = new List<int>();
-                ret.Add(gid);
+					ret = new List<TileIdData>();
+
+				TileIdData data = GetTileData(gid);
+				ret.Add(data);
             }
 
             return ret;
         }
 
-        private void ApplyIds(IList<int> ids, MapLayer layer)
+		private void ApplyIds(IList<TileIdData> ids, MapLayer layer)
         {
-            IEnumerator<int> enumerator = ids.GetEnumerator();
+			IEnumerator<TileIdData> enumerator = ids.GetEnumerator();
 
             for (int y = 0; y < _size.Height; y++)
             {
@@ -113,7 +115,7 @@ namespace TmxCSharp.Loader
             enumerator.Dispose();
         }
 
-        private IList<int> ParseCsvData(XMLNode layerData)
+		private IList<TileIdData> ParseCsvData(XMLNode layerData)
         {
             if (layerData == null)
                 return null;
@@ -126,7 +128,7 @@ namespace TmxCSharp.Loader
             if (ss == null || ss.Length <= 0)
                 return null;
 
-            IList<int> ret = null;
+			IList<TileIdData> ret = null;
             for (int i = 0; i < ss.Length; ++i)
             {
                 string s = ss[i];
@@ -136,15 +138,18 @@ namespace TmxCSharp.Loader
                 if (int.TryParse(s, out idx))
                 {
                     if (ret == null)
-                        ret = new List<int>();
-                    ret.Add(idx);
+						ret = new List<TileIdData>();
+
+					TileIdData data = GetTileData(idx);
+
+                    ret.Add(data);
                 }
             }
 
             return ret;
         }
 
-        private IList<int> GetMapIdsFromBytes(byte[] decompressedData)
+		private IList<TileIdData> GetMapIdsFromBytes(byte[] decompressedData)
         {
             int expectedBytes = _expectedIds * 4;
 
@@ -156,37 +161,48 @@ namespace TmxCSharp.Loader
 				return null;
             }
 
-            IList<int> ret = null;
+			IList<TileIdData> ret = null;
             for (int tileIndex = 0; tileIndex < expectedBytes; tileIndex += 4)
             {
-                int tileId = GetTileId(decompressedData, tileIndex);
+				TileIdData data = GetTileId(decompressedData, tileIndex);
                 if (ret == null)
-                    ret = new List<int>();
-                ret.Add(tileId);
+					ret = new List<TileIdData>();
+                ret.Add(data);
             }
 
             return ret;
         }
 
-        private static int GetTileId(byte[] decompressedData, int tileIndex)
+		private static TileIdData GetTileData(long tileId)
+		{
+			const uint flippedHorizontallyFlag = 0x80000000;
+			const uint flippedVerticallyFlag = 0x40000000;
+			const uint flippedDiagonallyFlag = 0x20000000;
+			const uint flipMask = ~(flippedHorizontallyFlag | flippedVerticallyFlag | flippedDiagonallyFlag);
+
+			bool flippedHorizontally = (tileId & flippedHorizontallyFlag) > 0;
+			bool flippedVertically = (tileId & flippedVerticallyFlag) > 0;
+			bool flippedDiagonally = (tileId & flippedDiagonallyFlag) > 0;
+
+			TileIdData ret = new TileIdData();
+			ret.tileId = (int)(tileId & flipMask);
+			ret.isFlipX = flippedHorizontally;
+			ret.isFlipY = flippedVertically;
+
+			return ret;
+		}
+
+		private static TileIdData GetTileId(byte[] decompressedData, int tileIndex)
         {
-            const uint flippedHorizontallyFlag = 0x80000000;
-            const uint flippedVerticallyFlag = 0x40000000;
-            const uint flippedDiagonallyFlag = 0x20000000;
-            const uint flipMask = ~(flippedHorizontallyFlag | flippedVerticallyFlag | flippedDiagonallyFlag);
 
             long tileId = decompressedData[tileIndex]
                           | (decompressedData[tileIndex + 1] << 8)
                           | (decompressedData[tileIndex + 2] << 16)
                           | (decompressedData[tileIndex + 3] << 24);
 
-            // TODO: support these flags
+			TileIdData ret = GetTileData(tileId);
 
-            bool flippedHorizontally = (tileId & flippedHorizontallyFlag) > 0;
-            bool flippedVertically = (tileId & flippedVerticallyFlag) > 0;
-            bool flippedDiagonally = (tileId & flippedDiagonallyFlag) > 0;
-
-            return (int)(tileId & flipMask);
+			return ret;
         }
     }
 }

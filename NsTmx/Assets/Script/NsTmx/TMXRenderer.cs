@@ -77,12 +77,14 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 	private void AddVertex(int col, int row, 
 						   int layerIdx, int layerWidth, int layerHeight, 
 						   int baseTileWidth, int baseTileHeight, 
-						   int tileId, TileSet tile,
+							ref TileIdData tileData, TileSet tile,
                            List<Vector3> vertList, List<Vector2> uvList, List<int> indexList
                           // ,Dictionary<KeyValuePair<int, int>, int> XYToVertIdx
                           )
 
     {
+		int tileId = tileData.tileId;
+
 		tileId = tileId - tile.FirstId;
 		int deltaY = tile.TileHeight/baseTileHeight;
 
@@ -99,10 +101,31 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 		float y0 = (-((float)row) + (deltaY - 1)) * baseTileHeight * 0.01f; 
 		float x1 = x0 + tile.TileWidth * 0.01f;
 		float y1 = y0 - tile.TileHeight * 0.01f;
-        float uvX0 = uvX;
-        float uvX1 = uvX + uvPerX;
-        float uvY0 = uvY;
-		float uvY1 = uvY - uvPerY;
+
+		float uvX0;
+		float uvX1;
+		float uvY0;
+		float uvY1;
+
+		if (tileData.isFlipX)
+		{
+			uvX0 = uvX + uvPerX;
+			uvX1 = uvX;
+		} else
+		{
+			uvX0 = uvX;
+			uvX1 = uvX + uvPerX;
+		}
+
+		if (tileData.isFlipY)
+		{
+			uvY0 = uvY - uvPerY;
+			uvY1 = uvY;
+		} else
+		{
+			uvY0 = uvY;
+			uvY1 = uvY - uvPerY;
+		}
 
 		float z = -layerIdx * 0.01f;
 
@@ -208,16 +231,16 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
                 {
                     for (int c = 0; c < layer.Width; ++c)
                     {
-                        int tileId = layer.TileIds[r, c];
-                        if (!tmxData.Tile.ContainsTile(tileId))
-                            continue;
+						TileIdData tileData = layer.TileIds[r, c];
+						if (!tmxData.Tile.ContainsTile(tileData.tileId))
+							continue;
 
 						if (indexList == null)
 							indexList = new List<int>();
 						
 						AddVertex(c, r, l, layer.Width, layer.Height, 
 								m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
-								tileId, tmxData.Tile, 
+								ref tileData, tmxData.Tile, 
 								vertList, uvList, indexList/*, XYToVertIdx*/);
                       
                     }
