@@ -84,6 +84,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
     {
 		tileId = tileId - tile.FirstId;
+		int deltaY = tile.TileHeight/baseTileHeight;
 
 		int tileColCnt = Mathf.CeilToInt(tile.Image.Width / tile.TileWidth);
 		int r = tileId / tileColCnt;
@@ -95,7 +96,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
 		float x0 = (float)(col * baseTileWidth) * 0.01f;
 		//float y0 = ((float)((layerHeight - row) * baseTileHeight -  tile.TileHeight)) * 0.01f;
-		float y0 = -((float)row) * baseTileHeight * 0.01f; 
+		float y0 = (-((float)row) + (deltaY - 1)) * baseTileHeight * 0.01f; 
 		float x1 = x0 + tile.TileWidth * 0.01f;
 		float y1 = y0 - tile.TileHeight * 0.01f;
         float uvX0 = uvX;
