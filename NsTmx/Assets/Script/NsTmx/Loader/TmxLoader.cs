@@ -53,9 +53,11 @@ namespace TmxCSharp.Loader
                 return null;
 
             if (mapNodeList.Count > 1)
+			{
 				#if DEBUG
 				Debug.LogError("Tmx MapNode only one!");
 				#endif
+			}
 
             XMLNode map = mapNodeList[0] as XMLNode;
 
