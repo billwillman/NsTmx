@@ -305,8 +305,10 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 		
 	}
 
+
+
     // 全部到Mesh
-	public void BuildAllToMesh(Mesh mesh, GameObject target)
+	public void BuildAllToMesh(Mesh mesh, GameObject target, Camera cam = null)
     {
         if (m_TileMap == null || !m_TileMap.IsVaild || mesh == null)
             return;
@@ -397,10 +399,29 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 											 1f);
 
 			Transform targetTrans = target.transform;
-			targetTrans.localScale = targetScale;
+			targetTrans.localScale = targetScale * m_Scale;
 		}
+
+		SetCameraSize(cam);
 		#endif
     }
+
+	private void SetCameraSize(Camera cam)
+	{
+		if (cam == null || m_TileMap == null || !m_TileMap.IsVaild)
+			return;
+
+		float mapPixelW = m_TileMap.Size.Width * m_TileMap.Size.TileWidth;
+		float mapPixelH = m_TileMap.Size.Height * m_TileMap.Size.TileHeight;
+
+		float camW = cam.pixelWidth;
+		float camH = cam.pixelHeight;
+
+		float midW = mapPixelW/mapPixelH * camH;
+		float scale = midW/camW;
+
+		cam.orthographicSize = m_DesignHeight * scale;
+	}
 
     public string ResRootPath
     {
@@ -449,6 +470,11 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
     {
         Clear();
     }
+
+	#if _USE_ADDVERTEX2
+	public int m_DesignHeight = 720;
+	public float m_Scale = 1.0f;
+	#endif
 
     private string m_ResRootPath = string.Empty;
     private TileMap m_TileMap = null;

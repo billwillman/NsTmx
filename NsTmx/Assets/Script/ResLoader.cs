@@ -33,7 +33,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 		{
 			if (m_Renderer.LoadMapFromFile("tmx/TiledSupport-1.tmx", this))
 			{
-				m_Renderer.BuildAllToMesh(m_Mesh, gameObject);
+				m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
 			}
 		}
 	}

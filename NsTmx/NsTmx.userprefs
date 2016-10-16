@@ -2,23 +2,20 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\NsTmx\TMXRenderer.cs">
     <Files>
-      <File FileName="Assets\Script\NsTmx\TMXRenderer.cs" Line="199" Column="29" />
-      <File FileName="Assets\Script\ResLoader.cs" Line="38" Column="2" />
-      <File FileName="Assets\Script\NsTmx\Loader\TmxLoader.cs" Line="79" Column="59" />
-      <File FileName="Assets\Script\NsTmx\TMXRenderData.cs" Line="27" Column="18" />
-      <File FileName="Assets\Script\NsTmx\Loader\MapLayerLoader.cs" Line="59" Column="10" />
+      <File FileName="Assets\Script\NsTmx\TMXRenderer.cs" Line="308" Column="2" />
+      <File FileName="Assets\Script\NsTmx\TMXRenderData.cs" Line="7" Column="1" />
+      <File FileName="Assets\Script\ResLoader.cs" Line="36" Column="25" />
+      <File FileName="Assets\Script\NsTmx\Models\TileMap.cs" Line="10" Column="10" />
+      <File FileName="Assets\Script\NsTmx\Loader\MapLayerLoader.cs" Line="1" Column="1" />
       <File FileName="Assets\Script\NsTmx\Loader\TileIdLoader.cs" Line="1" Column="1" />
-      <File FileName="Assets\Script\NsTmx\Loader\TileSetLoader.cs" Line="19" Column="1" />
-      <File FileName="Assets\Script\NsTmx\Models\TileMap.cs" Line="9" Column="52" />
-      <File FileName="Assets\Script\NsTmx\Models\TileSetImage.cs" Line="12" Column="1" />
-      <File FileName="Assets\Script\NsTmx\Models\TileSet.cs" Line="3" Column="5" />
-      <File FileName="Assets\Script\NsTmx\Models\MapLayer.cs" Line="3" Column="5" />
+      <File FileName="Assets\Script\NsTmx\Loader\TileSetLoader.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\NsTmx\Loader\TmxLoader.cs" Line="1" Column="1" />
+      <File FileName="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored.shader" Line="1" Column="1" />
+      <File FileName="Assets\Script\NsTmx\Models\TileMapSize.cs" Line="17" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="D:\NsTmx\NsTmx\Assets\Script\NsTmx\TMXRenderer.cs" line="203" column="13" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
