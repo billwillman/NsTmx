@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#define _USE_ADDVERTEX2
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -304,7 +306,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 	}
 
     // 全部到Mesh
-    public void BuildAllToMesh(Mesh mesh)
+	public void BuildAllToMesh(Mesh mesh, GameObject target)
     {
         if (m_TileMap == null || !m_TileMap.IsVaild || mesh == null)
             return;
@@ -316,7 +318,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         List<Vector2> uvList = new List<Vector2>();
 		List<List<int>> indexLists = new List<List<int>>();
         //Dictionary<KeyValuePair<int, int>, int> XYToVertIdx = new Dictionary<KeyValuePair<int, int>, int>();
-	
+
         var matIter = m_TileDataMap.GetEnumerator();
         while (matIter.MoveNext())
         {
@@ -345,11 +347,17 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
 						if (indexList == null)
 							indexList = new List<int>();
-						
+						#if _USE_ADDVERTEX2
+						AddVertex2(c, r, l, layer.Width, layer.Height, 
+							m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
+							ref tileData, tmxData.Tile, 
+							vertList, uvList, indexList/*, XYToVertIdx*/);
+						#else
 						AddVertex(c, r, l, layer.Width, layer.Height, 
 								m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
 								ref tileData, tmxData.Tile, 
 								vertList, uvList, indexList/*, XYToVertIdx*/);
+						#endif
                       
                     }
                 }
@@ -380,6 +388,18 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
 		mesh.RecalculateBounds();
 		mesh.UploadMeshData(true);
+
+		#if _USE_ADDVERTEX2
+		if (target != null)
+		{
+			Vector3 targetScale = new Vector3(m_TileMap.Size.Width * m_TileMap.Size.TileWidth, 
+											 m_TileMap.Size.Height * m_TileMap.Size.TileHeight, 
+											 1f);
+
+			Transform targetTrans = target.transform;
+			targetTrans.localScale = targetScale;
+		}
+		#endif
     }
 
     public string ResRootPath
