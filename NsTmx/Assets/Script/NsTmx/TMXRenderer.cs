@@ -1,5 +1,6 @@
 ﻿#define _USE_ADDVERTEX2
 
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +31,21 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
         return ret;
     }
+
+	public Func<TileSet, bool> OnIsTileSetVisible
+	{
+		get;
+		set;
+	}
+
+	private bool DoIsTileSetVisible(TileSet tile)
+	{
+		if (tile == null)
+			return false;
+		if (OnIsTileSetVisible != null)
+			return OnIsTileSetVisible(tile);
+		return true;
+	}
 
     private void Clear()
     {
@@ -62,7 +78,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
             for (int i = 0; i < tileSets.Count; ++i)
             {
                 TileSet tileSet = tileSets[i];
-                if (tileSet == null || !tileSet.IsVaid)
+				if (tileSet == null || !tileSet.IsVaid || !DoIsTileSetVisible(tileSet))
                     continue;
 
                 TmxTileData tileData = new TmxTileData(tileSet, this);
