@@ -96,11 +96,13 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         float uvY = 1f - (float)(r) * uvPerY;
         float uvX = (float)(c) * uvPerX;
 
-		float x0 = (float)(col * baseTileWidth) * 0.01f;
+		const float _cScale = 0.01f;
+
+		float x0 = (float)(col * baseTileWidth) * _cScale;
 		//float y0 = ((float)((layerHeight - row) * baseTileHeight -  tile.TileHeight)) * 0.01f;
-		float y0 = (-((float)row) + (deltaY - 1)) * baseTileHeight * 0.01f; 
-		float x1 = x0 + tile.TileWidth * 0.01f;
-		float y1 = y0 - tile.TileHeight * 0.01f;
+		float y0 = (-((float)row) + (deltaY - 1)) * baseTileHeight * _cScale; 
+		float x1 = x0 + tile.TileWidth * _cScale;
+		float y1 = y0 - tile.TileHeight * _cScale;
 
 		float uvX0;
 		float uvX1;
