@@ -13,6 +13,25 @@ using XmlParser;
 // TMX地图渲染
 public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 {
+	public bool LoadMapFromBinaryFile(string fileName, ITmxLoader loader)
+	{
+		Clear();
+		if (string.IsNullOrEmpty(fileName) || loader == null)
+			return false;
+
+		TileMap tileMap = TmxLoader.ParseBinary(fileName, loader);
+
+		bool ret = tileMap != null && tileMap.IsVaild;
+		if (ret)
+		{
+			m_TileMap = tileMap;
+			m_ResRootPath = Path.GetDirectoryName(fileName);
+			LoadRes(tileMap);
+		}
+
+		return ret;
+	}
+
 	public bool LoadMapFromXMLFile(string fileName, ITmxLoader loader)
     {
         Clear();
