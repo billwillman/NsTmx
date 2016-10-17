@@ -458,12 +458,6 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         }
     }
 
-    void Start()
-    {
-        // 测试
-     //   LoadMapFromFile("maps/@testtmx/d104.tmx.bytes");
-    }
-
     public TileMap Tile
     {
         get
