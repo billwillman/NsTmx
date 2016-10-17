@@ -329,12 +329,20 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
         if (m_TileMap == null || !m_TileMap.IsVaild || mesh == null)
             return;
 
+		MeshRenderer renderer = null;
+		if (target != null) {
+			renderer = target.GetComponent<MeshRenderer> ();
+			if (renderer == null)
+				renderer = target.AddComponent<MeshRenderer> ();
+		}
+
         mesh.Clear();
 
         // 设置顶点
         List<Vector3> vertList = new List<Vector3>();
         List<Vector2> uvList = new List<Vector2>();
 		List<List<int>> indexLists = new List<List<int>>();
+		List<Material> matList = new List<Material> ();
         //Dictionary<KeyValuePair<int, int>, int> XYToVertIdx = new Dictionary<KeyValuePair<int, int>, int>();
 
         var matIter = m_TileDataMap.GetEnumerator();
@@ -343,7 +351,8 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
             TmxTileData tmxData = matIter.Current.Value;
             if (tmxData == null || tmxData.Tile == null || !tmxData.Tile.IsVaid)
                 continue;
-			
+			matList.Add (tmxData.Mat);
+
 			int tilePerX = tmxData.Tile.TileWidth / m_TileMap.Size.TileWidth;
 			int tilePerY = tmxData.Tile.TileHeight / m_TileMap.Size.TileHeight;
            // XYToVertIdx.Clear();
@@ -431,6 +440,10 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 			targetTrans.localScale = targetScale;
 		}
 		#endif
+
+		if (renderer != null  && m_TileDataMap.Count > 0) {
+			renderer.sharedMaterials = matList.ToArray ();
+		}
     }
 
 	private void SetCameraSize(Camera cam)

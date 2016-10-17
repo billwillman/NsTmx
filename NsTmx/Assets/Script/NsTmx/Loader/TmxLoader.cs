@@ -8,8 +8,10 @@ namespace TmxCSharp.Loader
 {
 	public interface ITmxLoader
 	{
+		// 加载地图
 		string _LoadMapXml(string fileName);
-		Texture _LoadTexture(string fileName);
+		// 加载材质
+		Material _LoadMaterial (string fileName);
 		void _DestroyResource(UnityEngine.Object res);
 	}
 

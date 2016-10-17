@@ -51,14 +51,17 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 		return text.text;
 	}
 
-	public Texture _LoadTexture(string fileName)
+	public Material _LoadMaterial (string fileName)
 	{
 		if (string.IsNullOrEmpty(fileName))
 			return null;
-		fileName = Path.ChangeExtension(fileName, "");
+		int idx = fileName.LastIndexOf ('.');
+		if (idx >= 0) {
+			fileName = fileName.Substring (0, idx);
+		}
 		if (string.IsNullOrEmpty(fileName))
 			return null;
-		Texture ret = Resources.Load<Texture>(fileName);
+		Material ret = Resources.Load<Material>(fileName);
 		return ret;
 	}
 

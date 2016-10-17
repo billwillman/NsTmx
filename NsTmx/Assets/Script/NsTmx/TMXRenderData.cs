@@ -32,42 +32,40 @@ namespace TmxCSharp.Renderer
             }
         }
 
-        public Texture Tex
-        {
-            get
-            {
-                if (m_Tex == null)
-                {
-                    if (m_Tile != null && m_Tile.Image != null && m_Parent != null)
-                    {
-                        string resRootPath = m_Parent.ResRootPath;
-                        if (!string.IsNullOrEmpty(resRootPath))
-                        {
-                            string fileName = Path.GetFileName(m_Tile.Image.FilePath);
-                            if (!string.IsNullOrEmpty(fileName))
-                            {
-                                fileName = string.Format("{0}/{1}", resRootPath, fileName);
-								m_Tex = TmxLoader.Loader._LoadTexture(resRootPath);
-                            }
-                        }
-                    }
-                }
+		public Material Mat
+		{
+			get
+			{
+				if (m_Mat == null) {
+					if (m_Tile != null && m_Tile.Image != null && m_Parent != null) {
+						string resRootPath = m_Parent.ResRootPath;
+						if (!string.IsNullOrEmpty(resRootPath))
+						{
+							string fileName = Path.GetFileName(m_Tile.Image.FilePath);
+							if (!string.IsNullOrEmpty(fileName))
+							{
+								fileName = Path.GetFileNameWithoutExtension (fileName);
+								fileName = string.Format("{0}/{1}.mat", resRootPath, fileName);
+								m_Mat = TmxLoader.Loader._LoadMaterial(fileName);
+							}
+						}
+					}
+				}
 
-                return m_Tex;
-            }
-        }
+				return m_Mat;
+			}
+		}
 
         public void Destroy()
         {
-            if (m_Tex != null)
-            {
-				TmxLoader.Loader._DestroyResource(m_Tex);
-                m_Tex = null;
-            }
+			if (m_Mat != null) {
+				TmxLoader.Loader._DestroyResource(m_Mat);
+				m_Mat = null;
+			}
         }
 
         private TileSet m_Tile = null;
-        private Texture m_Tex = null;
+		private Material m_Mat = null;
         private ITmxTileDataParent m_Parent = null;
     }
 }
