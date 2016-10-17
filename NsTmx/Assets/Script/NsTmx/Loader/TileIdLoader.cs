@@ -31,35 +31,8 @@ namespace TmxCSharp.Loader
 		{
 			if (mapLayer == null || stream == null || stream.Length <= 0)
 				return;
-
-			string encoding = FilePathMgr.Instance.ReadString(stream);
-			switch (encoding)
-			{
-			case "base64":
-				string dataStr = FilePathMgr.Instance.ReadString(stream);
-				string compress = FilePathMgr.Instance.ReadString(stream);
-
-				ApplyIds(GetMapIdsFromBase64(dataStr, compress), mapLayer);
-				break;
-
-			case "csv":
-				string csvStr = FilePathMgr.Instance.ReadString(stream);
-				ApplyIds(ParseCsvData(csvStr), mapLayer);
-				break;
-
-			default:
-				if (string.IsNullOrEmpty(encoding))
-				{
-					ApplyIds(GetMapIdsFromBinary(stream), mapLayer);
-				}
-				else
-				{
-					#if DEBUG
-					Debug.LogError("Unsupported layer data encoding (expected base64 or csv)");
-					#endif
-				}
-				break;
-			}
+			
+			ApplyIds(GetMapIdsFromBinary(stream), mapLayer);
 		}
 
         public void LoadLayer(MapLayer mapLayer, XMLNode layerData)
