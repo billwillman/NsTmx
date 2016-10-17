@@ -408,17 +408,28 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 		mesh.UploadMeshData(true);
 
 		#if _USE_ADDVERTEX2
+		// 摄影机Size
+		SetCameraSize(cam);
+
 		if (target != null)
 		{
 			Vector3 targetScale = new Vector3(m_TileMap.Size.Width * m_TileMap.Size.TileWidth, 
 											 m_TileMap.Size.Height * m_TileMap.Size.TileHeight, 
 											 1f);
 
-			Transform targetTrans = target.transform;
-			targetTrans.localScale = targetScale * m_Scale;
-		}
+			targetScale *= m_Scale;
 
-		SetCameraSize(cam);
+			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0)
+			{
+				float h = cam.orthographicSize;
+				float midW = ((float)m_DesignWidth)/((float)m_DesignHeight) * h;
+				float desginScale = midW/m_DesignWidth;
+				targetScale *= desginScale;
+			}
+
+			Transform targetTrans = target.transform;
+			targetTrans.localScale = targetScale;
+		}
 		#endif
     }
 
@@ -488,6 +499,8 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
     }
 
 	#if _USE_ADDVERTEX2
+	public bool m_UseDesign = true;
+	public int m_DesignWidth = 1280;
 	public int m_DesignHeight = 720;
 	public float m_Scale = 1.0f;
 	#endif
