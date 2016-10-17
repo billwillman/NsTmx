@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using XmlParser;
 using TmxCSharp.Models;
+using UnityEngine;
 
 namespace TmxCSharp.Loader
 {
@@ -90,8 +91,64 @@ namespace TmxCSharp.Loader
 				gp.AddLayer (layer);
 
 				layer.Props = PropertysLoader.LoadPropertys (node);
+				layer.Polygon = LoadPolygon(node);
 			}
 
+		}
+
+		private static readonly char[] _cVecsSplit = new char[]{' '};
+		private static readonly char[] _cVecSplit = new char[]{','};
+
+		private static IList<Vector2> LoadPolygon(XMLNode parent)
+		{
+			if (parent == null)
+				return null;
+			XMLNodeList polygonList = parent.GetNodeList("polygon");
+			if (polygonList == null || polygonList.Count <= 0)
+				return null;
+
+			IList<Vector2> ret = null;
+
+			XMLNode node = polygonList[0] as XMLNode;
+			if (node == null)
+				return ret;
+
+			string str = node.GetValue("@points");
+			if (string.IsNullOrEmpty(str))
+				return ret;
+
+			string[] vecsStr = str.Split(_cVecsSplit);
+			if (vecsStr == null || vecsStr.Length <= 0)
+				return ret;
+
+			for (int i = 0; i < vecsStr.Length; ++i)
+			{
+				string s = vecsStr[i];
+				if (string.IsNullOrEmpty(s))
+					continue;
+
+				string[] vec = s.Split(_cVecSplit);
+				if (vec == null || vec.Length < 2)
+					continue;
+				
+				string ss = vec[0];
+				int x;
+				if (!int.TryParse(ss, out x))
+					continue;
+
+				ss = vec[1];
+				int y;
+				if (!int.TryParse(ss, out y))
+					continue;
+
+				if (ret == null)
+					ret = new List<Vector2>();
+
+				Vector2 vec2 = new Vector2(x, y);
+				ret.Add(vec2);
+			}
+
+			return ret;
 		}
 
 	}
