@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using TmxCSharp.Models;
 using XmlParser;
 using UnityEngine;
+using Utils;
 
 namespace TmxCSharp.Loader
 {
@@ -54,6 +56,30 @@ namespace TmxCSharp.Loader
 
             return layers;
         }
+
+		public static IList<MapLayer> LoadMapLayers(Stream stream, TileIdLoader tileIdLoader)
+		{
+			if (stream == null || stream.Length <= 0 || tileIdLoader == null)
+				return null;
+
+			int layerCnt = FilePathMgr.Instance.ReadInt(stream);
+			if (layerCnt <= 0)
+				return null;
+
+			IList<MapLayer> ret = new List<MapLayer>(layerCnt);
+			for (int i = 0; i < layerCnt; ++i)
+			{
+				string name = FilePathMgr.Instance.ReadString(stream);
+				int width = FilePathMgr.Instance.ReadInt(stream);
+				int height = FilePathMgr.Instance.ReadInt(stream);
+				MapLayer mapLayer = new MapLayer(name, width, height);
+				ret.Add(mapLayer);
+
+				tileIdLoader.LoadLayer(mapLayer, stream);
+			}
+
+			return ret;
+		}
 
         private static MapLayer GetLayerMetadata(XMLNode layer)
         {

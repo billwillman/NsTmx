@@ -1,11 +1,34 @@
 ﻿using System;
+using System.IO;
 using XmlParser;
 using TmxCSharp.Models;
+using Utils;
 
 namespace TmxCSharp.Loader
 {
 	internal static class PropertysLoader
 	{
+		public static Propertys LoadPropertys(Stream stream)
+		{
+			if (stream == null || stream.Length <= 0)
+				return null;
+
+			int propsCnt = FilePathMgr.Instance.ReadInt(stream);
+			if (propsCnt <= 0)
+				return null;
+
+			Propertys ret = new Propertys();
+			for (int i = 0; i < propsCnt; ++i)
+			{
+				string name = FilePathMgr.Instance.ReadString(stream);
+				string value = FilePathMgr.Instance.ReadString(stream);
+				Property prop = new Property(name, value);
+				ret.AddProp(prop);
+			}
+
+			return ret;
+		}
+
 		public static Propertys LoadPropertys(XMLNode parent)
 		{
 			if (parent == null)

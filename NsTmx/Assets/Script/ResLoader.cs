@@ -32,7 +32,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 		if (m_Renderer != null)
 		{
 			float t = Time.realtimeSinceStartup;
-			if (m_Renderer.LoadMapFromFile("tmx/TiledSupport-1.tmx", this))
+			if (m_Renderer.LoadMapFromXMLFile("tmx/TiledSupport-1.tmx", this))
 			{
 				float t1 = Time.realtimeSinceStartup;
 				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
@@ -66,6 +66,22 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			return null;
 		Material ret = Resources.Load<Material>(fileName);
 		return ret;
+	}
+
+	public byte[] _LoadBinary(string fileName)
+	{
+		if (string.IsNullOrEmpty(fileName))
+			return null;
+		int idx = fileName.LastIndexOf ('.');
+		if (idx >= 0) {
+			fileName = fileName.Substring (0, idx);
+		}
+		if (string.IsNullOrEmpty(fileName))
+			return null;
+		TextAsset text = Resources.Load<TextAsset>(fileName);
+		if (text == null)
+			return null;
+		return text.bytes;
 	}
 
 	public void _DestroyResource(UnityEngine.Object res)

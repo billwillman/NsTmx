@@ -10,6 +10,7 @@ namespace TmxCSharp.Loader
 	{
 		// 加载地图
 		string _LoadMapXml(string fileName);
+		byte[] _LoadBinary(string fileName);
 		// 加载材质
 		Material _LoadMaterial (string fileName);
 		void _DestroyResource(UnityEngine.Object res);
@@ -86,6 +87,26 @@ namespace TmxCSharp.Loader
 
 			return new TileMap(tileMapSize, tileSets, layers, gps);
         }
+
+		// 二进制文件读取
+		public static TileMap ParseBinary(string fileName, ITmxLoader loader)
+		{
+			if (string.IsNullOrEmpty(fileName) || loader == null)
+				return null;
+
+			byte[] buf = loader._LoadBinary(fileName);
+			if (buf == null || buf.Length <= 0)
+				return null;
+
+			MemoryStream stream = new MemoryStream(buf);
+			TileMapSize tileMapSize = TileMapSizeLoader.LoadTileMapSize(stream);
+			TileIdLoader tileIdLoader = new TileIdLoader(tileMapSize);
+			IList<TileSet> tileSets = TileSetLoader.LoadTileSets(stream);
+			IList<MapLayer> layers = MapLayerLoader.LoadMapLayers(stream, tileIdLoader);
+			IList<ObjectGroup> gps = ObjectLayerLoader.LoadObjectGroup (stream);
+
+			return new TileMap(tileMapSize, tileSets, layers, gps);
+		}
 
 
         private static bool AssertRequirements(XMLNode map)

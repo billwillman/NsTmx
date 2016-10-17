@@ -13,7 +13,7 @@ using XmlParser;
 // TMX地图渲染
 public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 {
-	public bool LoadMapFromFile(string fileName, ITmxLoader loader)
+	public bool LoadMapFromXMLFile(string fileName, ITmxLoader loader)
     {
         Clear();
 		if (string.IsNullOrEmpty(fileName) || loader == null)

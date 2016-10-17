@@ -4,11 +4,13 @@ using System.IO;
 using TmxCSharp.Models;
 using XmlParser;
 using UnityEngine;
+using Utils;
 
 namespace TmxCSharp.Loader
 {
     internal static class TileSetLoader
     {
+
         public static IList<TileSet> LoadTileSets(XMLNodeList tileSets)
         {
             if (tileSets == null || tileSets.Count <= 0)
@@ -76,6 +78,36 @@ namespace TmxCSharp.Loader
 
             return new TileSet(firstgid, name, tilewidth, tileheight, tileSetImage);
         }
+
+		public static IList<TileSet> LoadTileSets(Stream stream)
+		{
+			if (stream == null || stream.Length <= 0)
+				return null;
+
+			int cnt = FilePathMgr.Instance.ReadInt(stream);
+			if (cnt <= 0)
+				return null;
+
+			List<TileSet> ret = new List<TileSet>(cnt);
+
+			for (int i = 0; i < cnt; ++i)
+			{
+				int firstgid = FilePathMgr.Instance.ReadInt(stream);
+				string name = FilePathMgr.Instance.ReadString(stream);
+				int tileWidth = FilePathMgr.Instance.ReadInt(stream);
+				int tileHeight = FilePathMgr.Instance.ReadInt(stream);
+
+				string imgSource = FilePathMgr.Instance.ReadString(stream);
+				int imgWidth = FilePathMgr.Instance.ReadInt(stream);
+				int imgHeight = FilePathMgr.Instance.ReadInt(stream);
+				TileSetImage img = new TileSetImage(imgSource, imgWidth, imgHeight);
+
+				TileSet tile = new TileSet(firstgid, name, tileWidth, tileHeight, img);
+				ret.Add(tile);
+			}
+
+			return ret;
+		}
 
         private static TileSetImage GetTileSetImage(XMLNode image)
         {

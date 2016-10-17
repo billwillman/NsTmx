@@ -1,11 +1,26 @@
 ﻿using System;
+using System.IO;
 using TmxCSharp.Models;
 using XmlParser;
+using Utils;
 
 namespace TmxCSharp.Loader
 {
     public static class TileMapSizeLoader
     {
+		public static TileMapSize LoadTileMapSize(Stream stream)
+		{
+			if (stream == null || stream.Length <= 0)
+				return null;
+			
+			int width = FilePathMgr.Instance.ReadInt(stream);
+			int height = FilePathMgr.Instance.ReadInt(stream);
+			int tileWidth = FilePathMgr.Instance.ReadInt(stream);
+			int tileHeight = FilePathMgr.Instance.ReadInt(stream);
+
+			return new TileMapSize(width, height, tileWidth, tileHeight);
+		}
+
         public static TileMapSize LoadTileMapSize(XMLNode map)
         {
             if (map == null)

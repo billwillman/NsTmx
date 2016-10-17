@@ -4,6 +4,7 @@ using System.IO;
 using TmxCSharp.Models;
 using XmlParser;
 using UnityEngine;
+using Utils;
 
 namespace TmxCSharp.Loader
 {
@@ -25,6 +26,41 @@ namespace TmxCSharp.Loader
             _size = tileMapSize;
             _expectedIds = tileMapSize.Width * tileMapSize.Height;
         }
+
+		public void LoadLayer(MapLayer mapLayer, Stream stream)
+		{
+			if (mapLayer == null || stream == null || stream.Length <= 0)
+				return;
+
+			string encoding = FilePathMgr.Instance.ReadString(stream);
+			switch (encoding)
+			{
+			case "base64":
+				string dataStr = FilePathMgr.Instance.ReadString(stream);
+				string compress = FilePathMgr.Instance.ReadString(stream);
+
+				ApplyIds(GetMapIdsFromBase64(dataStr, compress), mapLayer);
+				break;
+
+			case "csv":
+				string csvStr = FilePathMgr.Instance.ReadString(stream);
+				ApplyIds(ParseCsvData(csvStr), mapLayer);
+				break;
+
+			default:
+				if (string.IsNullOrEmpty(encoding))
+				{
+					ApplyIds(GetMapIdsFromBinary(stream), mapLayer);
+				}
+				else
+				{
+					#if DEBUG
+					Debug.LogError("Unsupported layer data encoding (expected base64 or csv)");
+					#endif
+				}
+				break;
+			}
+		}
 
         public void LoadLayer(MapLayer mapLayer, XMLNode layerData)
         {
@@ -73,6 +109,23 @@ namespace TmxCSharp.Loader
             return GetMapIdsFromBytes(Decompression.Decompress(compression, Convert.FromBase64String(value)));
         }
 
+		private IList<TileIdData> GetMapIdsFromBinary(Stream stream)
+		{
+			int cnt = FilePathMgr.Instance.ReadInt(stream);
+			if (cnt <= 0)
+				return null;
+
+			IList<TileIdData> ret = new List<TileIdData>(cnt);
+			for (int i = 0; i < cnt; ++i)
+			{
+				int gid = FilePathMgr.Instance.ReadInt(stream);
+				TileIdData data = GetTileData(gid);
+				ret.Add(data);
+			}
+
+			return ret;
+		}
+
 		private IList<TileIdData> GetMapIdsFromXml(XMLNodeList tiles)
         {
 			IList<TileIdData> ret = null;
@@ -115,38 +168,43 @@ namespace TmxCSharp.Loader
             enumerator.Dispose();
         }
 
+		private IList<TileIdData> ParseCsvData(string str)
+		{
+			if (string.IsNullOrEmpty(str))
+				return null;
+
+			string[] ss = str.Split(new char[] {','});
+			if (ss == null || ss.Length <= 0)
+				return null;
+
+			IList<TileIdData> ret = null;
+			for (int i = 0; i < ss.Length; ++i)
+			{
+				string s = ss[i];
+				if (string.IsNullOrEmpty(s))
+					continue;
+				int idx;
+				if (int.TryParse(s, out idx))
+				{
+					if (ret == null)
+						ret = new List<TileIdData>();
+
+					TileIdData data = GetTileData(idx);
+
+					ret.Add(data);
+				}
+			}
+
+			return ret;
+		}
+
 		private IList<TileIdData> ParseCsvData(XMLNode layerData)
         {
             if (layerData == null)
                 return null;
 
             string str = layerData.GetValue("_text");
-            if (string.IsNullOrEmpty(str))
-                return null;
-
-            string[] ss = str.Split(new char[] {','});
-            if (ss == null || ss.Length <= 0)
-                return null;
-
-			IList<TileIdData> ret = null;
-            for (int i = 0; i < ss.Length; ++i)
-            {
-                string s = ss[i];
-                if (string.IsNullOrEmpty(s))
-                    continue;
-                int idx;
-                if (int.TryParse(s, out idx))
-                {
-                    if (ret == null)
-						ret = new List<TileIdData>();
-
-					TileIdData data = GetTileData(idx);
-
-                    ret.Add(data);
-                }
-            }
-
-            return ret;
+			return ParseCsvData(str);
         }
 
 		private IList<TileIdData> GetMapIdsFromBytes(byte[] decompressedData)
@@ -173,7 +231,7 @@ namespace TmxCSharp.Loader
             return ret;
         }
 
-		private static TileIdData GetTileData(long tileId)
+		private static TileIdData GetTileData(int tileId)
 		{
 			const uint flippedHorizontallyFlag = 0x80000000;
 			const uint flippedVerticallyFlag = 0x40000000;
@@ -195,7 +253,7 @@ namespace TmxCSharp.Loader
 		private static TileIdData GetTileId(byte[] decompressedData, int tileIndex)
         {
 
-            long tileId = decompressedData[tileIndex]
+            int tileId = decompressedData[tileIndex]
                           | (decompressedData[tileIndex + 1] << 8)
                           | (decompressedData[tileIndex + 2] << 16)
                           | (decompressedData[tileIndex + 3] << 24);

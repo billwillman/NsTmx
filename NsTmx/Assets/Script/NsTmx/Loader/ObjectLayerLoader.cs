@@ -1,14 +1,40 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 using System.Collections.Generic;
 using XmlParser;
 using TmxCSharp.Models;
 using UnityEngine;
+using Utils;
 
 namespace TmxCSharp.Loader
 {
 	internal static class ObjectLayerLoader
 	{
+		public static IList<ObjectGroup> LoadObjectGroup(Stream stream)
+		{
+			if (stream == null || stream.Length <= 0)
+				return null;
+
+			int groupCnt = FilePathMgr.Instance.ReadInt(stream);
+			if (groupCnt <= 0)
+				return null;
+
+			IList<ObjectGroup> ret = new List<ObjectGroup>(groupCnt);
+			for (int i = 0; i < groupCnt; ++i)
+			{
+				string name = FilePathMgr.Instance.ReadString(stream);
+				int width = FilePathMgr.Instance.ReadInt(stream);
+				int height = FilePathMgr.Instance.ReadInt(stream);
+
+				ObjectGroup gp = new ObjectGroup (name, width, height);
+				ret.Add(gp);
+				LoadObject (stream, gp);
+			}
+
+			return ret;
+		}
+
 		public static IList<ObjectGroup> LoadObjectGroup(XMLNode parent)
 		{
 			if (parent == null)
@@ -47,6 +73,26 @@ namespace TmxCSharp.Loader
 
 			return ret;
 
+		}
+
+		private static void LoadObject(Stream stream, ObjectGroup gp)
+		{
+			int cnt = FilePathMgr.Instance.ReadInt(stream);
+			for (int i = 0; i < cnt; ++i)
+			{
+				string name = FilePathMgr.Instance.ReadString(stream);
+				string type = FilePathMgr.Instance.ReadString(stream);
+				int x = FilePathMgr.Instance.ReadInt(stream);
+				int y = FilePathMgr.Instance.ReadInt(stream);
+				int width = FilePathMgr.Instance.ReadInt(stream);
+				int height = FilePathMgr.Instance.ReadInt(stream);
+
+				ObjectLayer layer = new ObjectLayer (name, x, y, width, height, type);
+				gp.AddLayer (layer);
+
+				layer.Props = PropertysLoader.LoadPropertys (stream);
+				layer.Polygon = LoadPolygon(stream);
+			}
 		}
 
 		private static void LoadObject(XMLNode parent, ObjectGroup gp)
@@ -98,6 +144,24 @@ namespace TmxCSharp.Loader
 
 		private static readonly char[] _cVecsSplit = new char[]{' '};
 		private static readonly char[] _cVecSplit = new char[]{','};
+
+		private static IList<Vector2> LoadPolygon(Stream stream)
+		{
+			int pointCnt = FilePathMgr.Instance.ReadInt(stream);
+			if (pointCnt <= 0)
+				return null;
+
+			IList<Vector2> ret = new List<Vector2>();
+			for (int i = 0; i < pointCnt; ++i)
+			{
+				int x = FilePathMgr.Instance.ReadInt(stream);
+				int y = FilePathMgr.Instance.ReadInt(stream);
+				Vector2 vec2 = new Vector2(x, y);
+				ret.Add(vec2);
+			}
+
+			return ret;
+		}
 
 		private static IList<Vector2> LoadPolygon(XMLNode parent)
 		{
