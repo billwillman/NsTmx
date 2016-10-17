@@ -6,7 +6,7 @@ namespace TmxCSharp.Models
 {
     public class TileMap
     {
-        public TileMap(TileMapSize size, IList<TileSet> tileSets, IList<MapLayer> layers)
+		public TileMap(TileMapSize size, IList<TileSet> tileSets, IList<MapLayer> layers, IList<ObjectGroup> gps)
         {
             if (size == null)
             {
@@ -37,6 +37,9 @@ namespace TmxCSharp.Models
             TileSets = tileSets;
 
             Layers = layers;
+
+			// 对象层
+			ObjGroups = gps;
         }
 
         public TileSet FindTileSet(int tileId)
@@ -63,10 +66,36 @@ namespace TmxCSharp.Models
             }
         }
 
+		public bool HasObjGroups
+		{
+			get
+			{
+				return ObjGroups != null && ObjGroups.Count > 0;
+			}
+		}
+
+		public ObjectGroup GetObjectGroup(string name)
+		{
+			if (string.IsNullOrEmpty (name) || !HasObjGroups)
+				return null;
+
+			for (int i = 0; i < ObjGroups.Count; ++i) {
+				ObjectGroup gp = ObjGroups [i];
+				if (gp == null)
+					continue;
+				if (string.Compare (gp.Name, name) == 0)
+					return gp;
+			}
+
+			return null;
+		}
+
         public TileMapSize Size { get; private set; }
 
         public IList<TileSet> TileSets { get; private set; }
 
         public IList<MapLayer> Layers { get; private set; }
+
+		public IList<ObjectGroup> ObjGroups { get; private set; }
     }
 }

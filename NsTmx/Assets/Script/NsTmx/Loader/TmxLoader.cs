@@ -82,7 +82,9 @@ namespace TmxCSharp.Loader
 
             IList<MapLayer> layers = MapLayerLoader.LoadMapLayers(map, tileIdLoader);
 
-            return new TileMap(tileMapSize, tileSets, layers);
+			IList<ObjectGroup> gps = ObjectLayerLoader.LoadObjectGroup (map);
+
+			return new TileMap(tileMapSize, tileSets, layers, gps);
         }
 
 
