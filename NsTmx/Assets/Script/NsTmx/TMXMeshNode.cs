@@ -1,36 +1,19 @@
 ﻿using System;
 using UnityEngine;
-
+using TmxCSharp.Loader;
+using TmxCSharp.Models;
+using TmxCSharp.Renderer;
 
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
 public class TMXMeshNode: MonoBehaviour
 {
-	/* 节点 */
 
-	public TMXMeshNode XNodePrev {
-		get;
-		set;
-	}
-
-	public TMXMeshNode XNodeNext {
-		get;
-		set;
-	}
-
-	public TMXMeshNode YNodePrev
+	public TileIdData tileData
 	{
 		get;
 		set;
 	}
-
-	public TMXMeshNode YNodeNext
-	{
-		get;
-		set;
-	}
-
-	//---------------------------------------------
 
 	public Mesh mesh
 	{
@@ -42,6 +25,7 @@ public class TMXMeshNode: MonoBehaviour
 
 	public void Destroy()
 	{
+		tileData = null;
 	}
 
 	void OnDestroy()

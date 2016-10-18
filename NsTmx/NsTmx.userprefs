@@ -1,12 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\NsTmx\TMXRenderData.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\NsTmx\TMXMeshManager.cs">
     <Files>
-      <File FileName="Assets\Script\ResLoader.cs" Line="35" Column="34" />
-      <File FileName="Assets\Script\NsTmx\TMXRenderer.cs" Line="81" Column="40" />
-      <File FileName="Assets\Script\NsTmx\Loader\TmxLoader.cs" Line="107" Column="52" />
-      <File FileName="Assets\Script\NsTmx\Loader\TileIdLoader.cs" Line="51" Column="3" />
-      <File FileName="Assets\Script\NsTmx\Loader\MapLayerLoader.cs" Line="78" Column="23" />
+      <File FileName="Assets\Script\NsTmx\TMXMeshManager.cs" Line="33" Column="1" />
+      <File FileName="Assets\Script\ResLoader.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\NsTmx\TMXRenderer.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\NsTmx\Loader\TmxLoader.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\NsTmx\Loader\TileIdLoader.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\NsTmx\Loader\MapLayerLoader.cs" Line="1" Column="1" />
       <File FileName="Assets\Script\NsTmx\TMXRenderData.cs" Line="49" Column="27" />
     </Files>
   </MonoDevelop.Ide.Workbench>

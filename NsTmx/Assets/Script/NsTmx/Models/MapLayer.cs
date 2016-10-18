@@ -4,11 +4,53 @@ using System.Collections.Generic;
 
 namespace TmxCSharp.Models
 {
-	public struct TileIdData
+	public class TileIdData
 	{
-		public int tileId;
-		public bool isFlipX;
-		public bool isFlipY;
+		public int tileId
+		{
+			get;
+			set;
+		}
+
+		public bool isFlipX
+		{
+			get;
+			set;
+		}
+
+		public bool isFlipY
+		{
+			get;
+			set;
+		}
+
+		public System.Object userData
+		{
+			get;
+			set;
+		}
+
+		public TileIdData XNodePrev {
+			get;
+			set;
+		}
+
+		public TileIdData XNodeNext {
+			get;
+			set;
+		}
+
+		public TileIdData YNodePrev
+		{
+			get;
+			set;
+		}
+
+		public TileIdData YNodeNext
+		{
+			get;
+			set;
+		}
 	}
 
     public class MapLayer
@@ -22,6 +64,8 @@ namespace TmxCSharp.Models
             Height = height;
 
 			TileIds = null;
+
+			TileIdsGroup = null;
         }
 
         public bool IsVaild
@@ -39,6 +83,12 @@ namespace TmxCSharp.Models
         public int Height { get; private set; }
 
 		public IList<TileIdData> TileIds {
+			get;
+			internal set;
+		}
+
+		public TileIdGroups TileIdsGroup
+		{
 			get;
 			internal set;
 		}
