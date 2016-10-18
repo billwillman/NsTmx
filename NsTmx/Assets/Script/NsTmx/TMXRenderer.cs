@@ -355,6 +355,15 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 				renderer = target.AddComponent<MeshRenderer> ();
 		}
 
+		MeshFilter meshFilter = null;
+		if (target != null)
+		{
+			meshFilter = target.GetComponent<MeshFilter>();
+			if (meshFilter == null)
+				meshFilter = target.AddComponent<MeshFilter>();
+			meshFilter.sharedMesh = mesh;
+		}
+
         mesh.Clear();
 
         // 设置顶点
