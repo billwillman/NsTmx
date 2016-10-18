@@ -197,6 +197,13 @@ namespace TmxCSharp.Models
 			m_LayerList.Add (layer);
 		}
 
+		public ObjectLayer GetLayer(int index)
+		{
+			if (index < 0 || index >= LayerCount)
+				return null;
+			return m_LayerList[index];
+		}
+
 		public ObjectLayer GetLayer(string name)
 		{
 			if (string.IsNullOrEmpty (name) || m_LayerList == null)

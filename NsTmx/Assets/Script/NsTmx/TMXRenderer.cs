@@ -131,7 +131,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 
 		int tileId = tileData.tileId;
 		tileId = tileId - tile.FirstId;
-		int deltaY = tile.TileHeight/baseTileHeight;
+		//int deltaY = tile.TileHeight/baseTileHeight;
 		int tileColCnt = Mathf.CeilToInt(tile.Image.Width / tile.TileWidth);
 		int r = tileId / tileColCnt;
 		int c = tileId % tileColCnt;
@@ -372,8 +372,8 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
                 continue;
 			matList.Add (tmxData.Mat);
 
-			int tilePerX = tmxData.Tile.TileWidth / m_TileMap.Size.TileWidth;
-			int tilePerY = tmxData.Tile.TileHeight / m_TileMap.Size.TileHeight;
+		//	int tilePerX = tmxData.Tile.TileWidth / m_TileMap.Size.TileWidth;
+		//	int tilePerY = tmxData.Tile.TileHeight / m_TileMap.Size.TileHeight;
            // XYToVertIdx.Clear();
 			List<int> indexList = null;
            

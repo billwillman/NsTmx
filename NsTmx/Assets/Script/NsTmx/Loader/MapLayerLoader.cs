@@ -81,6 +81,30 @@ namespace TmxCSharp.Loader
 			return ret;
 		}
 
+		public static void SaveToBinary(Stream stream, IList<MapLayer> list, TileMapSize size)
+		{
+			if (stream == null)
+				return;
+
+			if (list == null)
+			{
+				FilePathMgr.Instance.WriteInt(stream, 0);
+				return;
+			}
+
+			FilePathMgr.Instance.WriteInt(stream, list.Count);
+
+			for (int i = 0; i < list.Count; ++i)
+			{
+				MapLayer layer = list[i];
+				FilePathMgr.Instance.WriteString(stream, layer.Name);
+				FilePathMgr.Instance.WriteInt(stream, layer.Width);
+				FilePathMgr.Instance.WriteInt(stream, layer.Height);
+
+				TileIdLoader.SaveToBinary(stream, layer, size);
+			}
+		}
+
         private static MapLayer GetLayerMetadata(XMLNode layer)
         {
             if (layer == null)

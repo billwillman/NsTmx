@@ -35,6 +35,28 @@ namespace TmxCSharp.Loader
 			return ret;
 		}
 
+		public static void SaveToBinary(Stream stream, IList<ObjectGroup> list)
+		{
+			if (stream == null)
+				return;
+			if (list == null)
+			{
+				FilePathMgr.Instance.WriteInt(stream, 0);
+				return;
+			}
+
+			FilePathMgr.Instance.WriteInt(stream, list.Count);
+
+			for (int i = 0; i < list.Count; ++i)
+			{
+				ObjectGroup gp = list[i];
+				FilePathMgr.Instance.WriteString(stream, gp.Name);
+				FilePathMgr.Instance.WriteInt(stream, gp.Width);
+				FilePathMgr.Instance.WriteInt(stream, gp.Height);
+				SaveObject(stream, gp);
+			}
+		}
+
 		public static IList<ObjectGroup> LoadObjectGroup(XMLNode parent)
 		{
 			if (parent == null)
@@ -73,6 +95,24 @@ namespace TmxCSharp.Loader
 
 			return ret;
 
+		}
+
+		private static void SaveObject(Stream stream, ObjectGroup gp)
+		{
+			FilePathMgr.Instance.WriteInt(stream, gp.LayerCount);
+
+			for (int i = 0; i < gp.LayerCount; ++i)
+			{
+				ObjectLayer layer = gp.GetLayer(i);
+				FilePathMgr.Instance.WriteString(stream, layer.Name);
+				FilePathMgr.Instance.WriteString(stream, layer.Type);
+				FilePathMgr.Instance.WriteInt(stream, layer.X);
+				FilePathMgr.Instance.WriteInt(stream, layer.Y);
+				FilePathMgr.Instance.WriteInt(stream, layer.Width);
+				FilePathMgr.Instance.WriteInt(stream, layer.Height);
+				PropertysLoader.SaveToBinary(stream, layer.Props);
+				SavePolygon(stream, layer.Polygon);
+			}
 		}
 
 		private static void LoadObject(Stream stream, ObjectGroup gp)
@@ -161,6 +201,26 @@ namespace TmxCSharp.Loader
 			}
 
 			return ret;
+		}
+
+		private static void SavePolygon(Stream stream, IList<Vector2> vecs)
+		{
+			if (vecs == null)
+			{
+				FilePathMgr.Instance.WriteInt(stream, 0);
+				return;
+			}
+
+			FilePathMgr.Instance.WriteInt(stream, vecs.Count);
+
+			for (int i = 0; i < vecs.Count; ++i)
+			{
+				Vector2 vec = vecs[i];
+				int x = Mathf.RoundToInt(vec.x);
+				int y = Mathf.RoundToInt(vec.y);
+				FilePathMgr.Instance.WriteInt(stream, x);
+				FilePathMgr.Instance.WriteInt(stream, y);
+			}
 		}
 
 		private static IList<Vector2> LoadPolygon(XMLNode parent)

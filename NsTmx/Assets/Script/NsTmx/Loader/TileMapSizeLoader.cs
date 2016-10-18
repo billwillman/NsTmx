@@ -21,6 +21,17 @@ namespace TmxCSharp.Loader
 			return new TileMapSize(width, height, tileWidth, tileHeight);
 		}
 
+		public static void SaveToBinary(Stream stream, TileMapSize size)
+		{
+			if (stream == null || size == null)
+				return;
+			
+			FilePathMgr.Instance.WriteInt(stream, size.Width);
+			FilePathMgr.Instance.WriteInt(stream, size.Height);
+			FilePathMgr.Instance.WriteInt(stream, size.TileWidth);
+			FilePathMgr.Instance.WriteInt(stream, size.TileHeight);
+		}
+
         public static TileMapSize LoadTileMapSize(XMLNode map)
         {
             if (map == null)

@@ -27,6 +27,23 @@ namespace TmxCSharp.Loader
             _expectedIds = tileMapSize.Width * tileMapSize.Height;
         }
 
+		public static void SaveToBinary(Stream stream, MapLayer layer, TileMapSize size)
+		{
+			if (stream == null || layer == null || size == null)
+				return;
+
+			for (int y = 0; y < size.Height; y++)
+			{
+				for (int x = 0; x < size.Width; x++)
+				{
+					TileIdData data = layer.TileIds[y, x];
+					int tileId = GetTileDataToId(data);
+					FilePathMgr.Instance.WriteInt(stream, tileId);
+				}
+			}
+
+		}
+
 		public void LoadLayer(MapLayer mapLayer, Stream stream)
 		{
 			if (mapLayer == null || stream == null || stream.Length <= 0)
@@ -204,10 +221,23 @@ namespace TmxCSharp.Loader
             return ret;
         }
 
-		private static TileIdData GetTileData(int tileId)
+		const uint flippedHorizontallyFlag = 0x80000000;
+		const uint flippedVerticallyFlag = 0x40000000;
+
+		public static int GetTileDataToId(TileIdData data)
 		{
-			const uint flippedHorizontallyFlag = 0x80000000;
-			const uint flippedVerticallyFlag = 0x40000000;
+			uint ret = (uint)data.tileId;
+			if (data.isFlipX)
+				ret |= flippedHorizontallyFlag;
+
+			if (data.isFlipY)
+				ret |= flippedVerticallyFlag;
+
+			return ((int)ret);
+		}
+
+		public static TileIdData GetTileData(int tileId)
+		{
 			const uint flippedDiagonallyFlag = 0x20000000;
 			const uint flipMask = ~(flippedHorizontallyFlag | flippedVerticallyFlag | flippedDiagonallyFlag);
 

@@ -109,6 +109,40 @@ namespace TmxCSharp.Loader
 			return ret;
 		}
 
+		public static void SaveToBinary(Stream stream, IList<TileSet> list)
+		{
+			if (stream == null)
+				return;
+
+			if (list == null || list.Count <= 0)
+			{
+				FilePathMgr.Instance.WriteInt(stream, 0);
+				return;
+			}
+
+			FilePathMgr.Instance.WriteInt(stream, list.Count);
+
+			for (int i = 0; i < list.Count; ++i)
+			{
+				TileSet tile = list[i];
+				FilePathMgr.Instance.WriteInt(stream, tile.FirstId);
+				FilePathMgr.Instance.WriteString(stream, tile.Name);
+				FilePathMgr.Instance.WriteInt(stream, tile.TileWidth);
+				FilePathMgr.Instance.WriteInt(stream, tile.TileHeight);
+				if (tile.Image == null)
+				{
+					FilePathMgr.Instance.WriteString(stream, string.Empty);
+					FilePathMgr.Instance.WriteInt(stream, 0);
+					FilePathMgr.Instance.WriteInt(stream, 0);
+				} else
+				{
+					FilePathMgr.Instance.WriteString(stream, tile.Image.FilePath);
+					FilePathMgr.Instance.WriteInt(stream, tile.Image.Width);
+					FilePathMgr.Instance.WriteInt(stream, tile.Image.Height);
+				}
+			}
+		}
+
         private static TileSetImage GetTileSetImage(XMLNode image)
         {
             if (image == null)

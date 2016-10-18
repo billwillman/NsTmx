@@ -108,6 +108,21 @@ namespace TmxCSharp.Loader
 			return new TileMap(tileMapSize, tileSets, layers, gps);
 		}
 
+		public static void SaveToBinary(string fileName, TileMap map)
+		{
+			if (string.IsNullOrEmpty(fileName) || map == null)
+				return;
+
+			FileStream stream = new FileStream(fileName, FileMode.Create);
+			TileMapSizeLoader.SaveToBinary(stream, map.Size);
+			TileSetLoader.SaveToBinary(stream, map.TileSets);
+			MapLayerLoader.SaveToBinary(stream, map.Layers, map.Size);
+			ObjectLayerLoader.SaveToBinary(stream, map.ObjGroups);
+
+			stream.Close();
+			stream.Dispose();
+		}
+
 
         private static bool AssertRequirements(XMLNode map)
         {

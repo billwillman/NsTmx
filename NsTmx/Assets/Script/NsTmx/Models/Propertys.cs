@@ -44,6 +44,16 @@ namespace TmxCSharp.Models
 			}
 		}
 
+		public Dictionary<string, Property>.Enumerator GetPropIter()
+		{
+			if (m_PropMap == null)
+			{
+				return new Dictionary<string, Property>.Enumerator();
+			}
+
+			return m_PropMap.GetEnumerator();
+		}
+
 		public void AddProp(Property prop)
 		{
 			if (prop == null || !prop.IsVaild)
