@@ -32,7 +32,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 		if (m_Renderer != null)
 		{
 			float t = Time.realtimeSinceStartup;
-			if (m_Renderer.LoadMapFromBinaryFile("tmx/TiledSupport-1.bytes", this))
+			if (m_Renderer.LoadMapFromBinaryFile("tmx/d107.bytes", this))
 			{
 				float t1 = Time.realtimeSinceStartup;
 				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
