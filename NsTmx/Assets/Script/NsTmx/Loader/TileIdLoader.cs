@@ -148,15 +148,6 @@ namespace TmxCSharp.Loader
 		private void ApplyIds(IList<TileIdData> ids, MapLayer layer)
         {
 			layer.TileIds = ids;
-
-			// 生成链表数据
-			if (ids == null || ids.Count <= 0)
-			{
-				layer.TileIdsGroup = null;
-			} else
-			{
-
-			}
         }
 
 		private IList<TileIdData> ParseCsvData(string str)

@@ -16,17 +16,26 @@ public class TMXMeshManager: MonoBehaviour
 
 		if (map == null)
 			return;
+
+		m_Tile = map;
 		
 		m_MapPixelW = map.Size.Width * map.Size.TileWidth;
 		m_MapPixelH = map.Size.Height * map.Size.TileHeight;
 
-		MoveMap (ref view, map);
+		MoveMap (ref view);
+	}
+
+	public void JumpTo(ref Vector4 view)
+	{
+		ClearNodes();
+		ClearLastCenter();
+		MoveMap(ref view);
 	}
 
 	// 地图左上角为位置
-	public void MoveMap(ref Vector4 view, TileMap map)
+	public void MoveMap(ref Vector4 view)
 	{
-		if (m_MapPixelH <= 0 || m_MapPixelW <= 0 || map == null)
+		if (m_MapPixelH <= 0 || m_MapPixelW <= 0 || m_Tile == null)
 			return;
 
 		if (!m_InitCenter)
@@ -34,59 +43,45 @@ public class TMXMeshManager: MonoBehaviour
 			m_InitCenter = true;
 			m_LastCenter = new Vector2(view.x + (view.z - view.x)/2f, view.y + (view.w - view.y)/2f);
 			SearcNodes(ref view);
+		} else
+		{
+			
 		}
 	}
 
 	private void SearcNodes(ref Vector4 vec)
 	{
 		ClearNodes();
-		SearchXNode(vec.x, vec.z);
-		SearchYNode(vec.y, vec.w);
-	}
-
-
-	private void SearchXNode(float xMin, float xMax)
-	{
-		
-	}
-
-	private void SearchYNode(float yMin, float yMax)
-	{
-		
-	}
-
-	public TMXMeshNode XFirstNode
-	{
-		get {
-			if (m_XFirstNode == null)
-				return null;
-			return (m_XFirstNode.userData as TMXMeshNode);
-		}
-	}
-
-	public TMXMeshNode YFirstNode
-	{
-		get {
-			if (m_YFirstNode == null)
-				return null;
-			return m_YFirstNode.userData as TMXMeshNode;
-		}
+		// 创建TMXNODE
 	}
 
 	private void ClearNodes()
 	{
-		TileIdData node = m_XFirstNode;
-
-		while (node != null) {
-			TileIdData next = node.XNodeNext;
-			InPool(node);
-			node = next;
+		if (IsVaildTile)
+		{
+			var mapLayers = m_Tile.Layers;
+			if (mapLayers == null)
+				return;
+			for (int l = 0; l < mapLayers.Count; ++l)
+			{
+				var layer = mapLayers[l];
+				for (int r = m_YStart; r <= m_YEnd; ++r)
+				{
+					for (int c = m_XStart; c <= m_XEnd; ++c)
+					{
+						int idx = r * layer.Width + c;
+						TileIdData data = layer.TileIds[idx];
+						InPool(data);
+					}
+				}
+			}
 		}
+	}
 
-		m_XFirstNode = null;
-		m_YFirstNode = null;
-		m_XEndNode = null;
-		m_YEndNode = null;
+	private void ClearLastCenter()
+	{
+		m_InitCenter = false;
+		m_LastCenter = Vector2.zero;
 	}
 
 	private void Clear()
@@ -95,9 +90,9 @@ public class TMXMeshManager: MonoBehaviour
 
 		m_MapPixelW = 0;
 		m_MapPixelH = 0;
+		m_Tile = null;
 
-		m_InitCenter = false;
-		m_LastCenter = Vector2.zero;
+		ClearLastCenter();
 	}
 
 	private TMXMeshNode _CreateMeshNode()
@@ -118,6 +113,7 @@ public class TMXMeshManager: MonoBehaviour
 	{
 		node.Destroy();
 		node.gameObject.SetActive(false);
+		node.transform.localPosition = Vector3.one;
 	}
 
 	private void InitPool()
@@ -162,17 +158,27 @@ public class TMXMeshManager: MonoBehaviour
 		}
 	}
 
-	private TileIdData m_XFirstNode = null;
-	private TileIdData m_YFirstNode = null;
-	private TileIdData m_XEndNode = null;
-	private TileIdData m_YEndNode = null;
+	private bool IsVaildTile
+	{
+		get
+		{
+			return (m_XStart >= 0) && (m_XEnd >= 0) && (m_XStart < m_XEnd) && 
+				(m_YStart >= 0) && (m_YEnd >= 0) && (m_YStart < m_YEnd) && m_Tile != null && m_Tile.IsVaild;
+		}
+	}
+
+	private int m_XStart = -1;
+	private int m_XEnd = -1;
+	private int m_YStart = -1;
+	private int m_YEnd = -1;
+	private TileMap m_Tile = null;
 
 	// 池
 	private ObjectPool<TMXMeshNode> m_Pool = new ObjectPool<TMXMeshNode>();
 	private bool m_InitPool = false;
 
-	private int m_MapPixelW = 0;
-	private int m_MapPixelH = 0;
+	private float m_MapPixelW = 0;
+	private float m_MapPixelH = 0;
 
 	private Vector2 m_LastCenter = Vector2.zero;
 	private bool m_InitCenter = false;

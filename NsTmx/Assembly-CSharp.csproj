@@ -3,8 +3,9 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
+    <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{D0AC3E16-CDA4-F746-37E2-DD78B443FF1F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -33,54 +34,53 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.XML" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>D:\Program Files\Unity5_3\Editor\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>D:/Program Files/Unity5_3/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>D:\Program Files\Unity5_3\Editor\Data\Managed\UnityEditor.dll</HintPath>
+      <HintPath>D:/Program Files/Unity5_3/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Script\NsTmx\Loader\Decompression.cs" />
-    <Compile Include="Assets\Script\NsTmx\Loader\MapLayerLoader.cs" />
-    <Compile Include="Assets\Script\NsTmx\Loader\ObjectLayerLoader.cs" />
-    <Compile Include="Assets\Script\NsTmx\Loader\PropertysLoader.cs" />
-    <Compile Include="Assets\Script\NsTmx\Loader\TileIdLoader.cs" />
-    <Compile Include="Assets\Script\NsTmx\Loader\TileMapSizeLoader.cs" />
-    <Compile Include="Assets\Script\NsTmx\Loader\TileSetLoader.cs" />
-    <Compile Include="Assets\Script\NsTmx\Loader\TmxLoader.cs" />
-    <Compile Include="Assets\Script\NsTmx\Models\MapLayer.cs" />
-    <Compile Include="Assets\Script\NsTmx\Models\ObjectLayer.cs" />
-    <Compile Include="Assets\Script\NsTmx\Models\Propertys.cs" />
-    <Compile Include="Assets\Script\NsTmx\Models\TileMap.cs" />
-    <Compile Include="Assets\Script\NsTmx\Models\TileMapSize.cs" />
-    <Compile Include="Assets\Script\NsTmx\Models\TileSet.cs" />
-    <Compile Include="Assets\Script\NsTmx\Models\TileSetImage.cs" />
-    <Compile Include="Assets\Script\NsTmx\TMXMeshManager.cs" />
-    <Compile Include="Assets\Script\NsTmx\TMXMeshNode.cs" />
-    <Compile Include="Assets\Script\NsTmx\TMXRenderData.cs" />
-    <Compile Include="Assets\Script\NsTmx\TMXRenderer.cs" />
-    <Compile Include="Assets\Script\ResLoader.cs" />
-    <Compile Include="Assets\Script\Utils\CachedMonoBehaviour.cs" />
-    <Compile Include="Assets\Script\Utils\FilePathMgr.cs" />
-    <Compile Include="Assets\Script\Utils\ObjectPool.cs" />
-    <Compile Include="Assets\Script\Utils\Singleton.cs" />
-    <Compile Include="Assets\Script\XmlParser\XMLNode.cs" />
-    <Compile Include="Assets\Script\XmlParser\XMLNodeList.cs" />
-    <Compile Include="Assets\Script\XmlParser\XMLParser.cs" />
-    <Reference Include="UnityEngine.UI">
-      <HintPath>D:\Program Files\Unity5_3\Editor\Data\UnityExtensions\Unity\GUISystem\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>D:\Program Files\Unity5_3\Editor\Data\UnityExtensions\Unity\Networking\UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="zlib.net">
-      <HintPath>D:\NsTmx\NsTmx\Assets\Script\NsTmx\packages\zlib.net.1.0.4.0\lib\zlib.net.dll</HintPath>
-    </Reference>
-    <Compile Include="Assets\Script\NsTmx\Models\TileIdGroups.cs" />
+     <Compile Include="Assets\Script\NsTmx\Loader\Decompression.cs" />
+     <Compile Include="Assets\Script\NsTmx\Loader\MapLayerLoader.cs" />
+     <Compile Include="Assets\Script\NsTmx\Loader\ObjectLayerLoader.cs" />
+     <Compile Include="Assets\Script\NsTmx\Loader\PropertysLoader.cs" />
+     <Compile Include="Assets\Script\NsTmx\Loader\TileIdLoader.cs" />
+     <Compile Include="Assets\Script\NsTmx\Loader\TileMapSizeLoader.cs" />
+     <Compile Include="Assets\Script\NsTmx\Loader\TileSetLoader.cs" />
+     <Compile Include="Assets\Script\NsTmx\Loader\TmxLoader.cs" />
+     <Compile Include="Assets\Script\NsTmx\Models\MapLayer.cs" />
+     <Compile Include="Assets\Script\NsTmx\Models\ObjectLayer.cs" />
+     <Compile Include="Assets\Script\NsTmx\Models\Propertys.cs" />
+     <Compile Include="Assets\Script\NsTmx\Models\TileMap.cs" />
+     <Compile Include="Assets\Script\NsTmx\Models\TileMapSize.cs" />
+     <Compile Include="Assets\Script\NsTmx\Models\TileSet.cs" />
+     <Compile Include="Assets\Script\NsTmx\Models\TileSetImage.cs" />
+     <Compile Include="Assets\Script\NsTmx\TMXMeshManager.cs" />
+     <Compile Include="Assets\Script\NsTmx\TMXMeshNode.cs" />
+     <Compile Include="Assets\Script\NsTmx\TMXRenderData.cs" />
+     <Compile Include="Assets\Script\NsTmx\TMXRenderer.cs" />
+     <Compile Include="Assets\Script\ResLoader.cs" />
+     <Compile Include="Assets\Script\Utils\CachedMonoBehaviour.cs" />
+     <Compile Include="Assets\Script\Utils\FilePathMgr.cs" />
+     <Compile Include="Assets\Script\Utils\ObjectPool.cs" />
+     <Compile Include="Assets\Script\Utils\Singleton.cs" />
+     <Compile Include="Assets\Script\XmlParser\XMLNode.cs" />
+     <Compile Include="Assets\Script\XmlParser\XMLNodeList.cs" />
+     <Compile Include="Assets\Script\XmlParser\XMLParser.cs" />
+ <Reference Include="UnityEngine.UI">
+ <HintPath>D:/Program Files/Unity5_3/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Networking">
+ <HintPath>D:/Program Files/Unity5_3/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ </Reference>
+ <Reference Include="zlib.net">
+ <HintPath>D:/NsTmx/NsTmx/Assets/Script/NsTmx/packages/zlib.net.1.0.4.0/lib/zlib.net.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -90,4 +90,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  
 </Project>

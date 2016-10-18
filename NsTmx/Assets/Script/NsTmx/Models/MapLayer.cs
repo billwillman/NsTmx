@@ -29,28 +29,6 @@ namespace TmxCSharp.Models
 			get;
 			set;
 		}
-
-		public TileIdData XNodePrev {
-			get;
-			set;
-		}
-
-		public TileIdData XNodeNext {
-			get;
-			set;
-		}
-
-		public TileIdData YNodePrev
-		{
-			get;
-			set;
-		}
-
-		public TileIdData YNodeNext
-		{
-			get;
-			set;
-		}
 	}
 
     public class MapLayer
@@ -64,8 +42,6 @@ namespace TmxCSharp.Models
             Height = height;
 
 			TileIds = null;
-
-			TileIdsGroup = null;
         }
 
         public bool IsVaild
@@ -83,12 +59,6 @@ namespace TmxCSharp.Models
         public int Height { get; private set; }
 
 		public IList<TileIdData> TileIds {
-			get;
-			internal set;
-		}
-
-		public TileIdGroups TileIdsGroup
-		{
 			get;
 			internal set;
 		}
