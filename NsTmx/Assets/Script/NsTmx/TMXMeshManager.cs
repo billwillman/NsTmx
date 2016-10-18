@@ -49,6 +49,26 @@ public class TMXMeshManager: MonoBehaviour
 		}
 	}
 
+	private int GetTileRow(float y, bool isCeil)
+	{
+		y += m_MapPixelH/2f;
+		int perH = m_Tile.Size.TileHeight;
+		if (isCeil)
+			return Mathf.CeilToInt(y/perH);
+		else
+			return Mathf.FloorToInt(y/perH);
+	}
+
+	private int GetTileCol(float x, bool isCeil)
+	{
+		x += m_MapPixelW/2f;
+		int perW = m_Tile.Size.TileHeight;
+		if (isCeil)
+			return Mathf.CeilToInt(x/perW);
+		else
+			return Mathf.FloorToInt(x/perW);
+	}
+
 	private void SearcNodes(ref Vector4 vec)
 	{
 		ClearNodes();
