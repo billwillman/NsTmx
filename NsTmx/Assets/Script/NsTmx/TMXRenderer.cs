@@ -396,7 +396,8 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
                 {
                     for (int c = 0; c < layer.Width; ++c)
                     {
-						TileIdData tileData = layer.TileIds[r, c];
+						int idx = r * layer.Width + c;
+						TileIdData tileData = layer.TileIds[idx];
 						if (!tmxData.Tile.ContainsTile(tileData.tileId))
 							continue;
 

@@ -1,4 +1,8 @@
-﻿namespace TmxCSharp.Models
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace TmxCSharp.Models
 {
 	public struct TileIdData
 	{
@@ -17,14 +21,14 @@
 
             Height = height;
 
-			TileIds = new TileIdData[Height, Width];
+			TileIds = null;
         }
 
         public bool IsVaild
         {
             get
             {
-                return (Width > 0) && (Height > 0) && (TileIds != null) && (TileIds.Length > 0);
+				return (Width > 0) && (Height > 0) && (TileIds != null) && (TileIds.Count > 0);
             }
         }
 
@@ -34,6 +38,9 @@
 
         public int Height { get; private set; }
 
-		public TileIdData[,] TileIds { get; private set; }
+		public IList<TileIdData> TileIds {
+			get;
+			internal set;
+		}
     }
 }

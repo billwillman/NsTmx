@@ -98,6 +98,8 @@ namespace TmxCSharp.Loader
 			if (buf == null || buf.Length <= 0)
 				return null;
 
+			m_Loader = loader;
+
 			MemoryStream stream = new MemoryStream(buf);
 			TileMapSize tileMapSize = TileMapSizeLoader.LoadTileMapSize(stream);
 			TileIdLoader tileIdLoader = new TileIdLoader(tileMapSize);

@@ -32,11 +32,15 @@ namespace TmxCSharp.Loader
 			if (stream == null || layer == null || size == null)
 				return;
 
+			int cnt = size.Width * size.Height;
+			FilePathMgr.Instance.WriteInt (stream, cnt);
+
 			for (int y = 0; y < size.Height; y++)
 			{
 				for (int x = 0; x < size.Width; x++)
 				{
-					TileIdData data = layer.TileIds[y, x];
+					int idx = y * size.Width + x;
+					TileIdData data = layer.TileIds[idx];
 					int tileId = GetTileDataToId(data);
 					FilePathMgr.Instance.WriteInt(stream, tileId);
 				}
@@ -143,19 +147,7 @@ namespace TmxCSharp.Loader
 
 		private void ApplyIds(IList<TileIdData> ids, MapLayer layer)
         {
-			IEnumerator<TileIdData> enumerator = ids.GetEnumerator();
-
-            for (int y = 0; y < _size.Height; y++)
-            {
-                for (int x = 0; x < _size.Width; x++)
-                {
-                    enumerator.MoveNext();
-
-                    layer.TileIds[y, x] = enumerator.Current;
-                }
-            }
-
-            enumerator.Dispose();
+			layer.TileIds = ids;
         }
 
 		private IList<TileIdData> ParseCsvData(string str)
