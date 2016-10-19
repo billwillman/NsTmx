@@ -30,10 +30,8 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 				float t1 = Time.realtimeSinceStartup;
 				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
 				Vector4 view = new Vector4 (0, 0, 960, 540);
-				//m_Renderer.MeshJumpTo (ref view, Camera.main);
-				m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
-				Vector3 sz = m_Mesh.bounds.size;
-				Debug.LogFormat ("Mesh Size: Width=>{0} Height=>{1}", sz.x.ToString (), sz.y.ToString ());
+				m_Renderer.MeshJumpTo(Camera.main);
+				//m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
 			}
 		}
 	}

@@ -451,6 +451,22 @@ namespace TmxCSharp.Renderer
 		}
 
 		// 跳地图
+		public void MeshJumpTo(Camera cam)
+		{
+			if (cam == null)
+				return;
+			float h = cam.orthographicSize * 2f;
+			float w = ((float)cam.pixelWidth)/((float)cam.pixelHeight) * h;
+
+			float halfH = cam.orthographicSize;
+			float halfW = w/2f;
+			Vector2 pos = cam.transform.position;
+			Vector4 view = new Vector4(pos.x - halfW, pos.y - halfH, pos.x + halfW, pos.y + halfH) * 100f;
+
+			MeshJumpTo(ref view, cam);
+		}
+
+		// 跳地图
 		public void MeshJumpTo (ref Vector4 view, Camera cam)
 		{
 			if (m_TileMap == null)
