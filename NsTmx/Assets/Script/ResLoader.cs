@@ -12,19 +12,12 @@ using TmxCSharp.Renderer;
 public class ResLoader: MonoBehaviour, ITmxLoader
 {
 	private TMXRenderer m_Renderer = null;
-	private MeshFilter m_Filter = null;
 	private Mesh m_Mesh;
-	private MeshRenderer m_MeshRender = null;
 
 	void Awake()
 	{
-		m_Filter = GetComponent<MeshFilter>();
 		m_Renderer = GetComponent<TMXRenderer>();
-		m_MeshRender = GetComponent<MeshRenderer>();
 		m_Mesh = new Mesh();
-
-		if (m_Filter != null)
-			m_Filter.sharedMesh = m_Mesh;
 	}
 
 	void Start()
