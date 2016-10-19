@@ -553,7 +553,7 @@ namespace TmxCSharp.Renderer
 					meshFilter = target.AddComponent<MeshFilter> ();
 				meshFilter.sharedMesh = mesh;
 			}
-
+	
 			mesh.Clear ();
 
 			// 设置顶点
@@ -627,7 +627,7 @@ namespace TmxCSharp.Renderer
 			}
 
 			mesh.RecalculateBounds ();
-			mesh.UploadMeshData (true);
+			mesh.UploadMeshData (false);
 
 			#if _USE_ADDVERTEX2
 			// 摄影机Size

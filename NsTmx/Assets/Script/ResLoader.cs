@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define _MINI_MAP
+
+using System;
 using System.IO;
 using UnityEngine;
 using TmxCSharp.Loader;
@@ -27,11 +29,45 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			float t = Time.realtimeSinceStartup;
 			if (m_Renderer.LoadMapFromBinaryFile("tmx/d107.bytes", this))
 			{
+				Scene = 0;
 				float t1 = Time.realtimeSinceStartup;
 				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
-				Vector4 view = new Vector4 (0, 0, 960, 540);
-				//m_Renderer.MeshJumpTo(Camera.main);
+				#if _MINI_MAP
+				m_Renderer.MeshJumpTo(Camera.main);
+				#else
 				m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
+				#endif
+			}
+		}
+	}
+
+	private int Scene = 0;
+
+	void OnGUI()
+	{
+		if (GUILayout.Button("切換地圖"))
+		{
+			string fileName;
+			if (Scene == 0)
+			{
+				fileName = "tmx/TiledSupport-1.bytes";
+				Scene = 1;
+			} else
+			{
+				fileName = "tmx/d107.bytes";
+				Scene = 0;
+			}
+
+			float t = Time.realtimeSinceStartup;
+			if (m_Renderer.LoadMapFromBinaryFile(fileName, this))
+			{
+				float t1 = Time.realtimeSinceStartup;
+				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
+				#if _MINI_MAP
+				m_Renderer.MeshJumpTo(Camera.main);
+				#else
+				m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
+				#endif
 			}
 		}
 	}
