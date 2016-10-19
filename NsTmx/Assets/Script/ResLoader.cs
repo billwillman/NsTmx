@@ -1,4 +1,4 @@
-﻿//#define _MINI_MAP
+﻿#define _MINI_MAP
 
 using System;
 using System.IO;
@@ -37,6 +37,9 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 				#else
 				m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
 				#endif
+
+				float t2 = Time.realtimeSinceStartup;
+				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
 			}
 		}
 	}
@@ -68,6 +71,9 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 				#else
 				m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
 				#endif
+
+				float t2 = Time.realtimeSinceStartup;
+				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
 			}
 		}
 	}

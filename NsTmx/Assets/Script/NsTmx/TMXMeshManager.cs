@@ -129,12 +129,23 @@ namespace TmxCSharp.Renderer
 					return;
 				for (int l = 0; l < mapLayers.Count; ++l) {
 					var layer = mapLayers [l];
+					if (layer.TileIds == null || layer.TileIds.Count <= 0)
+						continue;
+
+					bool isOut = false;
 					for (int r = m_YStart; r <= m_YEnd; ++r) {
 						for (int c = m_XStart; c <= m_XEnd; ++c) {
 							int idx = r * layer.Width + c;
+							if (idx >= layer.TileIds.Count)
+							{
+								isOut = true;
+								break;
+							}
 							TileIdData data = layer.TileIds [idx];
 							InPool (data);
 						}
+						if (isOut)
+							break;
 					}
 				}
 			}
