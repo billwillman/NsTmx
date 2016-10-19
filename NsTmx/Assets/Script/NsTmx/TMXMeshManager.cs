@@ -25,7 +25,6 @@ namespace TmxCSharp.Renderer
 			m_MapPixelH = map.Size.Height * map.Size.TileHeight;
 
 			var render = this.Renderer;
-			render.SetCameraSize (cam);
 			render.SetTMXMeshManagerScale (this, cam);
 
 			MoveMap (ref view);
