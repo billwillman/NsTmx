@@ -492,6 +492,8 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 		if (tileSet == null)
 			return;
 
+		node.tileData = data;
+
 		AddVertex2(col, row, layerIdx, layer.Width, layer.Height, 
 			m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, data, 
 			tileSet);
