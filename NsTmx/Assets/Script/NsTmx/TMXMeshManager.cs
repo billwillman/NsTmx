@@ -7,6 +7,7 @@ using TmxCSharp.Renderer;
 
 // AOI算法
 // TMX可视范围的MESH管理
+[RequireComponent(typeof(TMXRenderer))]
 public class TMXMeshManager: MonoBehaviour
 {
 	// view可视范围 view已经是地图范围
@@ -53,26 +54,73 @@ public class TMXMeshManager: MonoBehaviour
 	{
 		y += m_MapPixelH/2f;
 		int perH = m_Tile.Size.TileHeight;
+		int ret;
 		if (isCeil)
-			return Mathf.CeilToInt(y/perH);
+			ret = Mathf.CeilToInt(y/perH);
 		else
-			return Mathf.FloorToInt(y/perH);
+			ret = Mathf.FloorToInt(y/perH);
+		if (ret < 0)
+			ret = 0;
+		else if (ret >= m_Tile.Size.TileHeight)
+			ret = m_Tile.Size.TileHeight - 1;
+		return ret;
 	}
 
 	private int GetTileCol(float x, bool isCeil)
 	{
 		x += m_MapPixelW/2f;
 		int perW = m_Tile.Size.TileHeight;
+		int ret;
 		if (isCeil)
-			return Mathf.CeilToInt(x/perW);
+			ret = Mathf.CeilToInt(x/perW);
 		else
-			return Mathf.FloorToInt(x/perW);
+			ret = Mathf.FloorToInt(x/perW);
+		if (ret < 0)
+			ret = 0;
+		else if (ret >= m_Tile.Size.Width)
+			ret = m_Tile.Size.Width - 1;
+		return ret;
 	}
 
 	private void SearcNodes(ref Vector4 vec)
 	{
 		ClearNodes();
+		if (m_Tile == null || !m_Tile.IsVaild)
+			return;
+
+		var mapLayers = m_Tile.Layers;
+		if (mapLayers == null || mapLayers.Count <= 0)
+			return;
+
 		// 创建TMXNODE
+		m_XStart = GetTileCol(vec.x, false);
+		m_XEnd = GetTileCol(vec.z, true);
+		m_YStart = GetTileRow(vec.y, false);
+		m_YEnd = GetTileRow(vec.w, true);
+
+		for (int i = 0; i < mapLayers.Count; ++i)
+		{
+			var layer = mapLayers[i];
+			for (int r = m_YStart; r <= m_YEnd; ++r)
+			{
+				for (int c = m_XStart; c <= m_XEnd; ++c)
+				{
+					int idx = r * layer.Width + c;
+					TileIdData data = layer.TileIds[idx];
+					TMXMeshNode meshNode = data.userData as TMXMeshNode;
+					if (meshNode == null)
+					{
+						meshNode = CreateMeshNode();
+						data.userData = meshNode;
+					}
+
+					TMXRenderer render = this.Renderer;
+					render.BuildTMXMeshNode(r, c, i, data);
+					
+				}
+			}
+		}
+
 	}
 
 	private void ClearNodes()
@@ -178,6 +226,16 @@ public class TMXMeshManager: MonoBehaviour
 		}
 	}
 
+	protected TMXRenderer Renderer
+	{
+		get
+		{
+			if (m_Renderer == null)
+				m_Renderer = GetComponent<TMXRenderer>();
+			return m_Renderer;
+		}
+	}
+
 	private bool IsVaildTile
 	{
 		get
@@ -204,4 +262,5 @@ public class TMXMeshManager: MonoBehaviour
 	private bool m_InitCenter = false;
 
 	private GameObject m_GameObj = null;
+	private TMXRenderer m_Renderer = null;
 }

@@ -114,9 +114,107 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 	private void AddVertex2(
 
 		int col, int row, 
+		int layerIdx, int layerWidth, int layerHeight,
+		int baseTileWidth, int baseTileHeight, 
+		TileIdData tileData, TileSet tile
+		)
+	{
+		TMXMeshNode node = tileData.userData as TMXMeshNode;
+
+		Vector3[] vertList = node.mesh.vertices;
+		Vector2[] uvList = node.mesh.uv;
+		int[] indexList = node.mesh.GetIndices(0);
+
+		Vector2 _meshsize_ = new Vector2(1.0f/((float)layerWidth), 1.0f/((float)layerHeight));
+		Vector2 _pivotPoint = new Vector2((col-1) * _meshsize_.x * -1 - _meshsize_.x / 2f, (row-1) * _meshsize_.y + _meshsize_.y / 2f); 
+		_pivotPoint.x += .5f;
+		_pivotPoint.y -= .5f;
+		float dx = ((float)tile.TileWidth / (float)baseTileWidth) - 1;
+		float dy = ((float)tile.TileHeight /(float)baseTileHeight) - 1;
+
+		int tileId = tileData.tileId;
+		tileId = tileId - tile.FirstId;
+		//int deltaY = tile.TileHeight/baseTileHeight;
+		int tileColCnt = Mathf.CeilToInt(tile.Image.Width / tile.TileWidth);
+		int r = tileId / tileColCnt;
+		int c = tileId % tileColCnt;
+		float uvPerY = ((float)tile.TileHeight) / ((float)tile.Image.Height);
+		float uvPerX = ((float)tile.TileWidth) / ((float)tile.Image.Width);
+		float uvY = 1f - (float)(r) * uvPerY;
+		float uvX = (float)(c) * uvPerX;
+
+		float x0 = ((_meshsize_.x/2) * -1) - _pivotPoint.x;
+		float y0 = (_meshsize_.y/2) - _pivotPoint.y + (dy * _meshsize_.y);
+		float x1 = (_meshsize_.x/2) - _pivotPoint.x + (dx * _meshsize_.x);
+		float y1 = ((_meshsize_.y/2) * -1) - _pivotPoint.y;
+
+		float uvX0;
+		float uvX1;
+		float uvY0;
+		float uvY1;
+
+		if (tileData.isFlipX)
+		{
+			uvX0 = uvX + uvPerX;
+			uvX1 = uvX;
+		} else
+		{
+			uvX0 = uvX;
+			uvX1 = uvX + uvPerX;
+		}
+
+		if (tileData.isFlipY)
+		{
+			uvY0 = uvY - uvPerY;
+			uvY1 = uvY;
+		} else
+		{
+			uvY0 = uvY;
+			uvY1 = uvY - uvPerY;
+		}
+
+		float z = -layerIdx * 0.01f;
+
+		int vertIdx = 0;
+		int indexIdx = 0;
+
+		Vector3 vec = new Vector3(x0, y0, z);
+		vertList[vertIdx] = vec;
+		Vector2 uv = new Vector2(uvX0, uvY0);
+		uvList[vertIdx] = uv;
+		indexList[indexIdx] = vertIdx;
+		++vertIdx;
+		++indexIdx;
+
+		vec = new Vector3(x1, y0, z);
+		vertList[vertIdx] = vec;
+		uv = new Vector2(uvX1, uvY0);
+		uvList[vertIdx] = uv;
+		indexList[indexIdx] = vertIdx;
+		++vertIdx;
+		++indexIdx;
+
+		vec = new Vector3(x1, y1, z);
+		vertList[vertIdx] = vec;
+		uv = new Vector2(uvX1, uvY1);
+		uvList[vertIdx] = uv;
+		indexList[indexIdx] = vertIdx;
+		++vertIdx;
+		++indexIdx;
+
+		vec = new Vector3(x0, y1, z);
+		vertList[vertIdx] = vec;
+		uv = new Vector2(uvX0, uvY1);
+		uvList[vertIdx] = uv;
+		indexList[indexIdx] = vertIdx;
+	}
+
+	private void AddVertex2(
+
+		int col, int row, 
 		int layerIdx, int layerWidth, int layerHeight, 
 		int baseTileWidth, int baseTileHeight, 
-		ref TileIdData tileData, TileSet tile,
+		TileIdData tileData, TileSet tile,
 		List<Vector3> vertList, List<Vector2> uvList, List<int> indexList
 		// ,Dictionary<KeyValuePair<int, int>, int> XYToVertIdx
 
@@ -220,7 +318,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 	private void AddVertex(int col, int row, 
 						   int layerIdx, int layerWidth, int layerHeight, 
 						   int baseTileWidth, int baseTileHeight, 
-							ref TileIdData tileData, TileSet tile,
+						   TileIdData tileData, TileSet tile,
                            List<Vector3> vertList, List<Vector2> uvList, List<int> indexList
                           // ,Dictionary<KeyValuePair<int, int>, int> XYToVertIdx
                           )
@@ -340,6 +438,41 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 		
 	}
 
+	internal void BuildTMXMeshNode(int row, int col, int layerIdx, TileIdData data)
+	{
+		if (layerIdx < 0 || data == null || data.userData == null || m_TileMap == null)
+			return;
+
+		var layers = m_TileMap.Layers;
+		if (layers == null || layers.Count <= 0 || layerIdx >= layers.Count)
+			return;
+
+		TMXMeshNode node = data.userData as TMXMeshNode;
+		if (node == null)
+			return;
+		
+		MapLayer layer = layers[layerIdx];
+
+		TileSet tileSet = null;
+		var matIter = m_TileDataMap.GetEnumerator();
+		while (matIter.MoveNext())
+		{
+			var t = matIter.Current.Value.Tile;
+			if (t.ContainsTile(data.tileId))
+			{
+				tileSet = t;
+				break;
+			}
+		}
+		matIter.Dispose();
+
+		if (tileSet == null)
+			return;
+
+		AddVertex2(col, row, layerIdx, layer.Width, layer.Height, 
+			m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, data, 
+			tileSet);
+	}
 
 
     // 全部到Mesh
@@ -406,12 +539,12 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 						#if _USE_ADDVERTEX2
 						AddVertex2(c, r, l, layer.Width, layer.Height, 
 							m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
-							ref tileData, tmxData.Tile, 
+							tileData, tmxData.Tile, 
 							vertList, uvList, indexList/*, XYToVertIdx*/);
 						#else
 						AddVertex(c, r, l, layer.Width, layer.Height, 
 								m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
-								ref tileData, tmxData.Tile, 
+								tileData, tmxData.Tile, 
 								vertList, uvList, indexList/*, XYToVertIdx*/);
 						#endif
                       
@@ -475,7 +608,7 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 		}
     }
 
-	private void SetCameraSize(Camera cam)
+	public void SetCameraSize(Camera cam)
 	{
 		if (cam == null || m_TileMap == null || !m_TileMap.IsVaild)
 			return;
