@@ -453,15 +453,16 @@ namespace TmxCSharp.Renderer
 		// 跳地图
 		public void MeshJumpTo(Camera cam)
 		{
+			// 有問題
 			if (cam == null)
 				return;
-			float h = cam.orthographicSize * 2f;
-			float w = ((float)cam.pixelWidth)/((float)cam.pixelHeight) * h;
 
-			float halfH = cam.orthographicSize;
-			float halfW = w/2f;
+			float halfW = cam.pixelWidth/2f;
+			float halfH = cam.pixelHeight/2f;
+
 			Vector2 pos = cam.transform.position;
-			Vector4 view = new Vector4(pos.x - halfW, pos.y - halfH, pos.x + halfW, pos.y + halfH) * 100f;
+
+			Vector4 view = new Vector4(pos.x - halfW, pos.y - halfH, pos.x + halfW, pos.y + halfH);
 
 			MeshJumpTo(ref view, cam);
 		}
@@ -475,6 +476,18 @@ namespace TmxCSharp.Renderer
 			meshMgr.JumpTo (ref view, m_TileMap, cam);
 		}
 
+		private float GetDesignScale(Camera cam)
+		{
+			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0) {
+				float h = cam.orthographicSize;
+				float midW = ((float)m_DesignWidth) / ((float)m_DesignHeight) * h;
+				float desginScale = midW / m_DesignWidth;
+				return desginScale;
+			}
+
+			return 1f;
+		}
+
 		internal void SetTMXMeshManagerScale (TMXMeshManager mgr, Camera cam)
 		{
 			if (mgr == null || cam == null)
@@ -486,12 +499,9 @@ namespace TmxCSharp.Renderer
 
 			targetScale *= m_Scale;
 
-			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0) {
-				float h = cam.orthographicSize;
-				float midW = ((float)m_DesignWidth) / ((float)m_DesignHeight) * h;
-				float desginScale = midW / m_DesignWidth;
-				targetScale *= desginScale;
-			}
+			float desginScale = GetDesignScale(cam);
+
+			targetScale *= desginScale;
 
 			Transform targetTrans = mgr.transform;
 			targetTrans.localScale = targetScale;
