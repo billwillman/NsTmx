@@ -456,8 +456,14 @@ namespace TmxCSharp.Renderer
 			// 有問題
 			if (cam == null)
 				return;
-
-			Vector2 pos = cam.transform.position * 100f;
+			
+			Vector3 p = cam.transform.position;
+			float delta;
+			if (p.z < 0)
+				delta = -1;
+			else
+				delta = 1;
+			Vector2 pos = p * 100f * delta;
 			Vector4 view;
 			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0)
 			{
