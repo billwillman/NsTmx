@@ -438,6 +438,29 @@ public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 		
 	}
 
+	internal void SetTMXMeshManagerScale(TMXMeshManager mgr, Camera cam)
+	{
+		if (mgr == null || cam == null)
+			return;
+
+		Vector3 targetScale = new Vector3(m_TileMap.Size.Width * m_TileMap.Size.TileWidth, 
+			m_TileMap.Size.Height * m_TileMap.Size.TileHeight, 
+			1f);
+
+		targetScale *= m_Scale;
+
+		if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0)
+		{
+			float h = cam.orthographicSize;
+			float midW = ((float)m_DesignWidth)/((float)m_DesignHeight) * h;
+			float desginScale = midW/m_DesignWidth;
+			targetScale *= desginScale;
+		}
+
+		Transform targetTrans = mgr.transform;
+		targetTrans.localScale = targetScale;
+	}
+
 	internal void BuildTMXMeshNode(int row, int col, int layerIdx, TileIdData data)
 	{
 		if (layerIdx < 0 || data == null || data.userData == null || m_TileMap == null)
