@@ -184,7 +184,7 @@ namespace TmxCSharp.Renderer
 			// 处理面片
 			float halfW = (x1 - x0) / 2f; 
 			float halfH = (y0 - y1) / 2f;
-			Vector3 pos = new Vector3 (x0 + halfW, y0 + halfH, z);
+			Vector3 pos = new Vector3 (x0 + halfW, y0 - halfH, z);
 			x0 = -halfW;
 			y0 = halfH;
 			x1 = halfW;
