@@ -457,12 +457,19 @@ namespace TmxCSharp.Renderer
 			if (cam == null)
 				return;
 
-			float halfW = cam.pixelWidth/2f;
-			float halfH = cam.pixelHeight/2f;
-
-			Vector2 pos = cam.transform.position;
-
-			Vector4 view = new Vector4(pos.x - halfW, pos.y - halfH, pos.x + halfW, pos.y + halfH);
+			Vector2 pos = cam.transform.position * 100f;
+			Vector4 view;
+			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0)
+			{
+				float halfW = (((float)cam.pixelWidth)/((float)cam.pixelHeight) * ((float)m_DesignHeight))/2f;
+				float halfH = ((float)m_DesignHeight)/2f;
+				view = new Vector4(pos.x - halfW, pos.y - halfH, pos.x + halfW, pos.y + halfH);
+			} else
+			{
+				float halfW = cam.pixelWidth/2f;
+				float halfH = cam.pixelHeight/2f;
+				view = new Vector4(pos.x - halfW, pos.y - halfH, pos.x + halfW, pos.y + halfH);
+			}
 
 			MeshJumpTo(ref view, cam);
 		}
@@ -476,32 +483,12 @@ namespace TmxCSharp.Renderer
 			meshMgr.JumpTo (ref view, m_TileMap, cam);
 		}
 
-		private float GetDesignScale(Camera cam)
-		{
-			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0) {
-				float h = cam.orthographicSize;
-				float midW = ((float)m_DesignWidth) / ((float)m_DesignHeight) * h;
-				float desginScale = midW / m_DesignWidth;
-				return desginScale;
-			}
-
-			return 1f;
-		}
-
 		internal void SetTMXMeshManagerScale (TMXMeshManager mgr, Camera cam)
 		{
 			if (mgr == null || cam == null)
 				return;
 
-			Vector3 targetScale = new Vector3 (m_TileMap.Size.Width * m_TileMap.Size.TileWidth, 
-				                     m_TileMap.Size.Height * m_TileMap.Size.TileHeight, 
-				                     1f);
-
-			targetScale *= m_Scale;
-
-			float desginScale = GetDesignScale(cam);
-
-			targetScale *= desginScale;
+			Vector3 targetScale = GetTargetScale(cam);
 
 			Transform targetTrans = mgr.transform;
 			targetTrans.localScale = targetScale;
@@ -646,19 +633,8 @@ namespace TmxCSharp.Renderer
 			// 摄影机Size
 
 			if (target != null) {
-				Vector3 targetScale = new Vector3 (m_TileMap.Size.Width * m_TileMap.Size.TileWidth, 
-					                     m_TileMap.Size.Height * m_TileMap.Size.TileHeight, 
-					                     1f);
 
-				targetScale *= m_Scale;
-
-				// 自适应
-				float scale = cam.orthographicSize/(m_DesignHeight/2);
-				float midW = ((float)m_DesignWidth) / ((float)m_DesignHeight) * cam.pixelHeight;
-				scale *= cam.pixelWidth / midW;
-				//---------
-
-				targetScale *= scale;
+				Vector3 targetScale = GetTargetScale(cam);
 
 				Transform targetTrans = target.transform;
 				targetTrans.localScale = targetScale;
@@ -668,6 +644,27 @@ namespace TmxCSharp.Renderer
 			if (renderer != null && m_TileDataMap.Count > 0) {
 				renderer.sharedMaterials = matList.ToArray ();
 			}
+		}
+
+		private Vector3 GetTargetScale(Camera cam)
+		{
+			Vector3 targetScale = new Vector3 (m_TileMap.Size.Width * m_TileMap.Size.TileWidth, 
+				m_TileMap.Size.Height * m_TileMap.Size.TileHeight, 
+				1f);
+
+			targetScale *= m_Scale;
+
+			if (m_UseDesign)
+			{
+				// 自适应
+				float scale = cam.orthographicSize/(m_DesignHeight/2);
+				float midW = ((float)m_DesignWidth) / ((float)m_DesignHeight) * cam.pixelHeight;
+				scale *= cam.pixelWidth / midW;
+				targetScale *= scale;
+				//---------
+			}
+
+			return targetScale;
 		}
 
 		public string ResRootPath {
