@@ -1,6 +1,4 @@
-﻿#define _MINI_MAP
-
-using System;
+﻿using System;
 using System.IO;
 using UnityEngine;
 using TmxCSharp.Loader;
@@ -15,6 +13,8 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 {
 	private TMXRenderer m_Renderer = null;
 	private Mesh m_Mesh;
+
+	public bool IsUseAllMesh = true;
 
 	void Awake()
 	{
@@ -32,11 +32,11 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 				Scene = 0;
 				float t1 = Time.realtimeSinceStartup;
 				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
-				#if _MINI_MAP
-				m_Renderer.MeshJumpTo(Camera.main);
-				#else
-				m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
-				#endif
+
+				if (IsUseAllMesh)
+					m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
+				else
+					m_Renderer.MeshJumpTo(Camera.main);
 
 				float t2 = Time.realtimeSinceStartup;
 				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
@@ -74,11 +74,11 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			{
 				float t1 = Time.realtimeSinceStartup;
 				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
-				#if _MINI_MAP
-				m_Renderer.MeshJumpTo(Camera.main);
-				#else
-				m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
-				#endif
+
+				if (IsUseAllMesh)
+					m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
+				else
+					m_Renderer.MeshJumpTo(Camera.main);
 
 				float t2 = Time.realtimeSinceStartup;
 				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());

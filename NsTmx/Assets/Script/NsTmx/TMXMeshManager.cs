@@ -49,12 +49,38 @@ namespace TmxCSharp.Renderer
 			if (m_MapPixelH <= 0 || m_MapPixelW <= 0 || m_Tile == null)
 				return;
 
+			ClipTileMapView (ref view);
+
 			if (!m_InitCenter) {
 				m_InitCenter = true;
 				m_LastCenter = new Vector2 (view.x + (view.z - view.x) / 2f, view.y + (view.w - view.y) / 2f);
 				SearcNodes (ref view);
 			} else {
 			
+			}
+		}
+
+		private void ClipTileMapView(ref Vector4 view)
+		{
+			if (m_Tile == null || !m_Tile.IsVaild)
+				return;
+
+			float halfW = ((float)(m_Tile.Size.TileWidth * m_Tile.Size.Width))/2f;
+			float halfH = ((float)(m_Tile.Size.TileHeight * m_Tile.Size.Height)) / 2f;
+			if (view.y > halfH) {
+				float delta = view.y - halfH;
+				view.y = halfH;
+				view.w -= delta;
+			} else if (view.w < -halfH) {
+				float delta = -halfH - view.w;
+				view.w = -halfH;
+				view.y += delta;
+			}
+
+			if (view.w < -halfW) {
+				float delta = -halfW - view.w;
+				view.w = -halfW;
+				view.x += delta;
 			}
 		}
 
@@ -102,7 +128,6 @@ namespace TmxCSharp.Renderer
 			if (mapLayers == null || mapLayers.Count <= 0)
 				return;
 
-			// 创建TMXNODE
 			m_XStart = GetTileCol (vec.x, false);
 			m_XEnd = GetTileCol (vec.z, true);
 			m_YStart = GetTileRow (vec.y, false);
