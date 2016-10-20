@@ -60,7 +60,8 @@ namespace TmxCSharp.Renderer
 
 		private int GetTileRow (float y, bool isCeil)
 		{
-			y += m_MapPixelH / 2f;
+			// Change World Axis To Map Axis
+			y = m_MapPixelH / 2f - y;
 			int perH = m_Tile.Size.TileHeight;
 			int ret;
 			if (isCeil)
@@ -76,6 +77,7 @@ namespace TmxCSharp.Renderer
 
 		private int GetTileCol (float x, bool isCeil)
 		{
+			// Change World Axis To Map Axis
 			x += m_MapPixelW / 2f;
 			int perW = m_Tile.Size.TileHeight;
 			int ret;

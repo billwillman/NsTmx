@@ -93,6 +93,10 @@ namespace TmxCSharp.Renderer
 			if (tileMap == null)
 				return;
 
+			if (m_DesignHeight > 0 && tileMap.IsVaild) {
+				m_DesignWidth = (((float)tileMap.Size.Width) * ((float)tileMap.Size.TileWidth)) / (((float)tileMap.Size.Height) * ((float)tileMap.Size.TileHeight)) * ((float)m_DesignHeight);
+			}
+
 			var tileSets = tileMap.TileSets;
 			if (tileSets != null) {
 				for (int i = 0; i < tileSets.Count; ++i) {
@@ -456,25 +460,21 @@ namespace TmxCSharp.Renderer
 			// 有問題
 			if (cam == null)
 				return;
-			
-			Vector3 p = cam.transform.position;
-			float delta;
-			if (p.z < 0)
-				delta = -1;
-			else
-				delta = 1;
-			Vector2 pos = p * 100f * delta;
+
+			Vector2 pos = cam.transform.position * 100f;
 			Vector4 view;
 			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0)
 			{
 				float halfW = (((float)cam.pixelWidth)/((float)cam.pixelHeight) * ((float)m_DesignHeight))/2f;
 				float halfH = ((float)m_DesignHeight)/2f;
-				view = new Vector4(pos.x - halfW, pos.y - halfH, pos.x + halfW, pos.y + halfH);
+				// 世界坐标系
+				view = new Vector4(pos.x - halfW, pos.y + halfH, pos.x + halfW, pos.y - halfH);
 			} else
 			{
 				float halfW = cam.pixelWidth/2f;
 				float halfH = cam.pixelHeight/2f;
-				view = new Vector4(pos.x - halfW, pos.y - halfH, pos.x + halfW, pos.y + halfH);
+				// 世界坐标系
+				view = new Vector4(pos.x - halfW, pos.y + halfH, pos.x + halfW, pos.y - halfH);
 			}
 
 			MeshJumpTo(ref view, cam);
@@ -727,7 +727,7 @@ namespace TmxCSharp.Renderer
 
 		#if _USE_ADDVERTEX2
 		public bool m_UseDesign = true;
-		public int m_DesignWidth = 1280;
+		private float m_DesignWidth = 1280;
 		public int m_DesignHeight = 720;
 		public float m_Scale = 1.0f;
 		#endif
