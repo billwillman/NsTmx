@@ -64,7 +64,7 @@ namespace TmxCSharp.Renderer
 			int perH = m_Tile.Size.TileHeight;
 			int ret;
 			if (isCeil)
-				ret = Mathf.CeilToInt (y / perH);
+				ret = Mathf.CeilToInt (y / perH) + 1;
 			else
 				ret = Mathf.FloorToInt (y / perH);
 			if (ret < 0)
@@ -80,7 +80,7 @@ namespace TmxCSharp.Renderer
 			int perW = m_Tile.Size.TileHeight;
 			int ret;
 			if (isCeil)
-				ret = Mathf.CeilToInt (x / perW);
+				ret = Mathf.CeilToInt (x / perW) + 1;
 			else
 				ret = Mathf.FloorToInt (x / perW);
 			if (ret < 0)

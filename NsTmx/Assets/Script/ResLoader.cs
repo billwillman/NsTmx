@@ -48,6 +48,14 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 
 	void OnGUI()
 	{
+		if (GUILayout.Button("刷新可視範圍"))
+		{
+			if (m_Renderer != null)
+			{
+				m_Renderer.MeshJumpTo(Camera.main);
+			}
+		}
+
 		if (GUILayout.Button("切換地圖"))
 		{
 			string fileName;
