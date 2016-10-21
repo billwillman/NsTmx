@@ -49,7 +49,7 @@ namespace TmxCSharp.Renderer
 			if (m_MapPixelH <= 0 || m_MapPixelW <= 0 || m_Tile == null)
 				return;
 
-			ClipTileMapView (ref view);
+			// ClipTileMapView (ref view);
 
 			if (!m_InitCenter) {
 				m_InitCenter = true;
