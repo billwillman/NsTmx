@@ -538,6 +538,19 @@ namespace TmxCSharp.Renderer
 				tileSet);
 		}
 
+		// 采用全散图
+		public void BuildAllMeshMap(Camera cam)
+		{
+			if (m_TileMap == null || !m_TileMap.IsVaild)
+				return;
+
+			float halfW = ((float)m_TileMap.Size.TileWidth) * ((float)m_TileMap.Size.Width)/2f;
+			float halfH = ((float)m_TileMap.Size.TileHeight) * ((float)m_TileMap.Size.Height)/2f;
+			Vector4 view = new Vector4 (-halfW, halfH, halfW, -halfH);
+
+			MeshJumpTo (ref view, cam);
+		}
+
 
 		// 全部到Mesh
 		public void BuildAllToMesh (Mesh mesh, GameObject target, Camera cam = null)

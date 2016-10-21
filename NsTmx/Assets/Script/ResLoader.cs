@@ -36,7 +36,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 				if (IsUseAllMesh)
 					m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
 				else
-					m_Renderer.MeshJumpTo(Camera.main);
+					m_Renderer.BuildAllMeshMap(Camera.main);
 
 				float t2 = Time.realtimeSinceStartup;
 				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());

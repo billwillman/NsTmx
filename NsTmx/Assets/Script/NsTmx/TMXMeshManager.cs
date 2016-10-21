@@ -60,6 +60,7 @@ namespace TmxCSharp.Renderer
 			}
 		}
 
+
 		private void ClipTileMapView(ref Vector4 view)
 		{
 			if (m_Tile == null || !m_Tile.IsVaild)
@@ -91,12 +92,12 @@ namespace TmxCSharp.Renderer
 			int perH = m_Tile.Size.TileHeight;
 			int ret;
 			if (isCeil)
-				ret = Mathf.CeilToInt (y / perH) + 1;
+				ret = Mathf.CeilToInt (y / perH) + 2;
 			else
 				ret = Mathf.FloorToInt (y / perH);
 			if (ret < 0)
 				ret = 0;
-			else if (ret >= m_Tile.Size.TileHeight)
+			else if (ret >= m_Tile.Size.Height)
 				ret = m_Tile.Size.TileHeight - 1;
 			return ret;
 		}
@@ -108,7 +109,7 @@ namespace TmxCSharp.Renderer
 			int perW = m_Tile.Size.TileHeight;
 			int ret;
 			if (isCeil)
-				ret = Mathf.CeilToInt (x / perW) + 1;
+				ret = Mathf.CeilToInt (x / perW) + 2;
 			else
 				ret = Mathf.FloorToInt (x / perW);
 			if (ret < 0)
@@ -133,11 +134,17 @@ namespace TmxCSharp.Renderer
 			m_YStart = GetTileRow (vec.y, false);
 			m_YEnd = GetTileRow (vec.w, true);
 
+			if (m_YStart >= m_YEnd || m_XStart >= m_XEnd)
+				return;
+
 			for (int i = 0; i < mapLayers.Count; ++i) {
 				var layer = mapLayers [i];
 				for (int r = m_YStart; r <= m_YEnd; ++r) {
 					for (int c = m_XStart; c <= m_XEnd; ++c) {
 						int idx = r * layer.Width + c;
+						if (idx >= layer.TileIds.Count)
+							return;
+						
 						TileIdData data = layer.TileIds [idx];
 						TMXRenderer render = this.Renderer;
 						render.BuildTMXMeshNode (r, c, i, data);
