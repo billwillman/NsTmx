@@ -36,7 +36,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 				if (IsUseAllMesh)
 					m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
 				else
-					m_Renderer.BuildAllMeshMap(Camera.main);
+					m_Renderer.MeshJumpTo(Camera.main);
 
 				float t2 = Time.realtimeSinceStartup;
 				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
@@ -54,28 +54,28 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			Vector3 vec = trans.localPosition;
 			vec.y += 0.5f;
 			trans.localPosition = vec;
-		//	m_Renderer.MeshJumpTo (cam);
+			m_Renderer.MeshJumpTo (cam);
 		} else if (Input.GetKeyDown (KeyCode.DownArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
 			vec.y -= 0.5f;
 			trans.localPosition = vec;
-		//	m_Renderer.MeshJumpTo (cam);
+			m_Renderer.MeshJumpTo (cam);
 		} else if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
 			vec.x -= 0.5f;
 			trans.localPosition = vec;
-		//	m_Renderer.MeshJumpTo (cam);
+			m_Renderer.MeshJumpTo (cam);
 		} else if (Input.GetKeyDown (KeyCode.RightArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
 			vec.x += 0.5f;
 			trans.localPosition = vec;
-			//m_Renderer.MeshJumpTo (cam);
+			m_Renderer.MeshJumpTo (cam);
 		}
 
 		if (GUILayout.Button("刷新可視範圍"))

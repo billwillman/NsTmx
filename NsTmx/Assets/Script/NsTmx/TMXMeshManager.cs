@@ -49,7 +49,7 @@ namespace TmxCSharp.Renderer
 			if (m_MapPixelH <= 0 || m_MapPixelW <= 0 || m_Tile == null)
 				return;
 
-			// ClipTileMapView (ref view);
+			ClipTileMapView (ref view);
 
 			if (!m_InitCenter) {
 				m_InitCenter = true;
@@ -68,6 +68,8 @@ namespace TmxCSharp.Renderer
 
 			float halfW = ((float)(m_Tile.Size.TileWidth * m_Tile.Size.Width))/2f;
 			float halfH = ((float)(m_Tile.Size.TileHeight * m_Tile.Size.Height)) / 2f;
+
+			// Y判断
 			if (view.y > halfH) {
 				float delta = view.y - halfH;
 				view.y = halfH;
@@ -78,23 +80,28 @@ namespace TmxCSharp.Renderer
 				view.y += delta;
 			}
 
-			if (view.w < -halfW) {
-				float delta = -halfW - view.w;
-				view.w = -halfW;
-				view.x += delta;
+			if (view.x < -halfW) {
+				float delta = -halfW - view.x;
+				view.x = -halfW;
+				view.z += delta;
+			} else if (view.z > halfW)
+			{
+				float delta = view.z - halfW;
+				view.z = halfW;
+				view.x -= delta;
 			}
 		}
 
 		private int GetTileRow (float y, bool isCeil)
 		{
-			// Change World Axis To Map Axis
-			y = m_MapPixelH / 2f - y;
-			int perH = m_Tile.Size.TileHeight;
+			float f = ((float)m_Tile.Size.Height)/2f - y/((float)m_Tile.Size.TileHeight);
+
 			int ret;
 			if (isCeil)
-				ret = Mathf.CeilToInt (y / perH) + 2;
+				ret = Mathf.CeilToInt(f) + 2;
 			else
-				ret = Mathf.FloorToInt (y / perH);
+				ret = Mathf.FloorToInt(f);
+
 			if (ret < 0)
 				ret = 0;
 			else if (ret >= m_Tile.Size.Height)
@@ -104,14 +111,14 @@ namespace TmxCSharp.Renderer
 
 		private int GetTileCol (float x, bool isCeil)
 		{
-			// Change World Axis To Map Axis
-			x += m_MapPixelW / 2f;
-			int perW = m_Tile.Size.TileHeight;
+			float f = ((float)m_Tile.Size.Width/2f) + x/((float)m_Tile.Size.TileWidth);
+
 			int ret;
 			if (isCeil)
-				ret = Mathf.CeilToInt (x / perW) + 2;
+				ret = Mathf.CeilToInt(f) + 2;
 			else
-				ret = Mathf.FloorToInt (x / perW);
+				ret = Mathf.FloorToInt(f);
+
 			if (ret < 0)
 				ret = 0;
 			else if (ret >= m_Tile.Size.Width)

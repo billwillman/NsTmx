@@ -465,8 +465,12 @@ namespace TmxCSharp.Renderer
 			Vector4 view;
 			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0)
 			{
-				float halfW = (((float)cam.pixelWidth)/((float)cam.pixelHeight) * ((float)m_DesignHeight))/2f;
-				float halfH = ((float)m_DesignHeight)/2f;
+				float orthW = (float)cam.pixelWidth/(float)cam.pixelHeight * ((float)cam.orthographicSize);
+				orthW *= 100f;
+				float scale = m_DesignWidth/orthW;
+
+				float halfW =  m_DesignWidth/2f;
+				float halfH = ((float)m_DesignHeight)/2f * scale;
 				// 世界坐标系
 				view = new Vector4(pos.x - halfW, pos.y + halfH, pos.x + halfW, pos.y - halfH);
 			} else
@@ -552,7 +556,7 @@ namespace TmxCSharp.Renderer
 		}
 
 
-		// 全部到Mesh
+		// 全部到整Mesh
 		public void BuildAllToMesh (Mesh mesh, GameObject target, Camera cam = null)
 		{
 			if (m_TileMap == null || !m_TileMap.IsVaild || mesh == null)
