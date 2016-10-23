@@ -22,30 +22,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 		m_Mesh = new Mesh();
 	}
 
-	void Start()
-	{
-		if (m_Renderer != null)
-		{
-			float t = Time.realtimeSinceStartup;
-			if (m_Renderer.LoadMapFromBinaryFile("tmx/d107.bytes", this))
-			{
-				Scene = 0;
-				float t1 = Time.realtimeSinceStartup;
-				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
-				/*
-				if (IsUseAllMesh)
-					m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
-				else
-					m_Renderer.MeshJumpTo(Camera.main);
-
-				float t2 = Time.realtimeSinceStartup;
-				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
-				*/
-			}
-		}
-	}
-
-	private int Scene = 0;
+	private int Scene = 1;
 
 	void OnGUI()
 	{
@@ -82,14 +59,6 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			trans.localPosition = vec;
 			if (!IsUseAllMesh)
 				m_Renderer.MeshMove (cam);
-		}
-
-		if (GUILayout.Button("刷新可視範圍"))
-		{
-			if (m_Renderer != null)
-			{
-				m_Renderer.MeshJumpTo(Camera.main);
-			}
 		}
 
 		if (GUILayout.Button("切換地圖"))
