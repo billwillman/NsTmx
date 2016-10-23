@@ -15,6 +15,11 @@ namespace TmxCSharp.Renderer
 	// TMX地图渲染
 	public class TMXRenderer : MonoBehaviour, ITmxTileDataParent
 	{
+		void Start()
+		{
+			InitMeshMgr();
+		}
+
 		public bool LoadMapFromBinaryFile (string fileName, ITmxLoader loader)
 		{
 			Clear ();
@@ -132,9 +137,9 @@ namespace TmxCSharp.Renderer
 			render.sharedMaterial = tmxTile.Mat;
 			var tile = tmxTile.Tile;
 
-			Vector3[] vertList = node.mesh.vertices;
-			Vector2[] uvList = node.mesh.uv;
-			int[] indexList = node.mesh.GetIndices (0);
+			Vector3[] vertList = node.VertBuf;
+			Vector2[] uvList = node.UVBuf;
+			int[] indexList = node.IndexBuf;
 
 			Vector2 _meshsize_ = new Vector2 (1.0f / ((float)layerWidth), 1.0f / ((float)layerHeight));
 			Vector2 _pivotPoint = new Vector2 ((col - 1) * _meshsize_.x * -1 - _meshsize_.x / 2f, (row - 1) * _meshsize_.y + _meshsize_.y / 2f); 
@@ -225,11 +230,7 @@ namespace TmxCSharp.Renderer
 			uvList [vertIdx] = uv;
 			indexList [indexIdx] = vertIdx;
 
-			node.mesh.vertices = vertList;
-			node.mesh.uv = uvList;
-			node.mesh.SetIndices (indexList, MeshTopology.Quads, 0);
-			node.mesh.UploadMeshData (false);
-			node.mesh.RecalculateBounds ();
+			node.UpdateMesh();
 		}
 
 		private void AddVertex2 (
@@ -766,18 +767,26 @@ namespace TmxCSharp.Renderer
 			Clear ();
 		}
 
+		private void InitMeshMgr()
+		{
+			if (m_MeshMgr == null)
+			{
+				GameObject obj = new GameObject ();
+				var trans = obj.transform;
+				trans.parent = transform;
+				trans.localScale = Vector3.one;
+				trans.localPosition = Vector3.zero;
+				trans.localRotation = Quaternion.identity;
+				obj.name = "TMXMeshManager";
+				m_MeshMgr = obj.AddComponent<TMXMeshManager> ();
+			}
+		}
+
 		private TMXMeshManager MeshMgr
 		{
 			get {
 				if (m_MeshMgr == null) {
-					GameObject obj = new GameObject ();
-					var trans = obj.transform;
-					trans.parent = transform;
-					trans.localScale = Vector3.one;
-					trans.localPosition = Vector3.zero;
-					trans.localRotation = Quaternion.identity;
-					obj.name = "TMXMeshManager";
-					m_MeshMgr = obj.AddComponent<TMXMeshManager> ();
+					InitMeshMgr();
 				}
 				return m_MeshMgr;
 			}

@@ -6,11 +6,15 @@ using TmxCSharp.Models;
 
 namespace TmxCSharp.Renderer
 {
-
 	// AOI算法
 	// TMX可视范围的MESH管理
 	public class TMXMeshManager: MonoBehaviour
 	{
+		void Start()
+		{
+			InitPool();
+		}
+
 		// view可视范围 view已经是地图范围
 		private void OpenMap (ref Vector4 view, TileMap map, Camera cam)
 		{
@@ -408,7 +412,7 @@ namespace TmxCSharp.Renderer
 			if (m_InitPool)
 				return;
 			m_InitPool = true;
-			m_Pool.Init (0, _CreateMeshNode, _DestroyMeshNode);
+			m_Pool.Init (10 * 10, _CreateMeshNode, _DestroyMeshNode);
 		}
 
 		public TMXMeshNode CreateMeshNode ()

@@ -16,19 +16,18 @@ namespace TmxCSharp.Renderer
 			set;
 		}
 
-		public Mesh mesh {
-			get {
-				if (m_Mesh == null) {
-					m_Mesh = new Mesh ();
-					m_Mesh.vertices = new Vector3[4];
-					m_Mesh.uv = new Vector2[4];
-					m_Mesh.SetIndices (new int[4], MeshTopology.Quads, 0);
-					m_Mesh.UploadMeshData (false);
-					MeshFilter filter = GetComponent<MeshFilter> ();
-					filter.sharedMesh = m_Mesh;
-				}
-				return m_Mesh;
+		public void UpdateMesh()
+		{
+			if (m_Mesh == null) {
+				m_Mesh = new Mesh ();
+				MeshFilter filter = GetComponent<MeshFilter> ();
+				filter.sharedMesh = m_Mesh;
 			}
+
+			m_Mesh.vertices = m_VertBuf;
+			m_Mesh.uv = m_UVBuf;
+			m_Mesh.SetIndices (m_IndexBuf, MeshTopology.Quads, 0);
+			m_Mesh.UploadMeshData (false);
 		}
 
 		public MeshRenderer Renderer {
@@ -58,8 +57,36 @@ namespace TmxCSharp.Renderer
 			Destroy ();
 		}
 
+		public Vector3[] VertBuf
+		{
+			get
+			{
+				return m_VertBuf;
+			}
+		}
+
+		public Vector2[] UVBuf
+		{
+			get
+			{
+				return m_UVBuf;
+			}
+		}
+
+		public int[] IndexBuf
+		{
+			get
+			{
+				return m_IndexBuf;
+			}
+		}
+
 		private Mesh m_Mesh = null;
 		private MeshRenderer m_Render = null;
+
+		private Vector3[] m_VertBuf = new Vector3[4];
+		private Vector2[] m_UVBuf = new Vector2[4];
+		private int[] m_IndexBuf = new int[4];
 	}
 
 }

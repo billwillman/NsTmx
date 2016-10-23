@@ -32,7 +32,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 				Scene = 0;
 				float t1 = Time.realtimeSinceStartup;
 				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
-
+				/*
 				if (IsUseAllMesh)
 					m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
 				else
@@ -40,6 +40,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 
 				float t2 = Time.realtimeSinceStartup;
 				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
+				*/
 			}
 		}
 	}
@@ -110,6 +111,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 				float t1 = Time.realtimeSinceStartup;
 				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
 
+
 				if (IsUseAllMesh)
 					m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
 				else
@@ -117,6 +119,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 
 				float t2 = Time.realtimeSinceStartup;
 				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
+
 			}
 		}
 	}
