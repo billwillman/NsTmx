@@ -10,10 +10,11 @@ namespace TmxCSharp.Renderer
 	// TMX可视范围的MESH管理
 	public class TMXMeshManager: MonoBehaviour
 	{
+		/*
 		void Start()
 		{
 			InitPool();
-		}
+		}*/
 
 		// view可视范围 view已经是地图范围
 		private void OpenMap (ref Vector4 view, TileMap map, Camera cam)
