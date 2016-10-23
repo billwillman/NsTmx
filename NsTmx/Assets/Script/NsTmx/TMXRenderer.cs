@@ -454,6 +454,39 @@ namespace TmxCSharp.Renderer
 			indexList.Add (vertIdx);
 		}
 
+		private Vector4 GetCamView(Camera cam)
+		{
+			
+			Vector4 view;
+			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0)
+			{
+				Vector2 pos = cam.transform.position * 100f;
+				float orthW = (float)cam.pixelWidth/(float)cam.pixelHeight * ((float)cam.orthographicSize);
+				orthW *= 100f;
+				float scale = m_DesignWidth/orthW;
+
+				float halfW =  m_DesignWidth/2f;
+
+				if (m_TileMap != null)
+					halfW += m_TileMap.Size.TileWidth * 4;
+
+				//float halfH  = ((float)m_DesignHeight)/2f * scale;
+				float halfH = halfW;
+				// 世界坐标系
+				view = new Vector4(pos.x - halfW, pos.y + halfH, pos.x + halfW, pos.y - halfH);
+;
+			} else
+			{
+				Vector2 pos = cam.transform.position * 100f;
+				float halfW = cam.pixelWidth/2f;
+				float halfH = cam.pixelHeight/2f;
+				// 世界坐标系
+				view = new Vector4(pos.x - halfW, pos.y + halfH, pos.x + halfW, pos.y - halfH);
+			}
+
+			return view;
+		}
+
 		// 跳地图
 		public void MeshJumpTo(Camera cam)
 		{
@@ -461,27 +494,31 @@ namespace TmxCSharp.Renderer
 			if (cam == null)
 				return;
 
-			Vector2 pos = cam.transform.position * 100f;
-			Vector4 view;
-			if (m_UseDesign && m_DesignWidth > 0 && m_DesignHeight > 0)
-			{
-				float orthW = (float)cam.pixelWidth/(float)cam.pixelHeight * ((float)cam.orthographicSize);
-				orthW *= 100f;
-				float scale = m_DesignWidth/orthW;
+			// 设置为5f
+			cam.orthographicSize = 5f;
 
-				float halfW =  m_DesignWidth/2f;
-				float halfH = ((float)m_DesignHeight)/2f * scale;
-				// 世界坐标系
-				view = new Vector4(pos.x - halfW, pos.y + halfH, pos.x + halfW, pos.y - halfH);
-			} else
-			{
-				float halfW = cam.pixelWidth/2f;
-				float halfH = cam.pixelHeight/2f;
-				// 世界坐标系
-				view = new Vector4(pos.x - halfW, pos.y + halfH, pos.x + halfW, pos.y - halfH);
-			}
+			Vector4 view = GetCamView(cam);
 
 			MeshJumpTo(ref view, cam);
+		}
+
+		public void MeshMove(Camera cam)
+		{
+			if (cam == null)
+				return;
+
+			Vector4 view = GetCamView(cam);
+
+			MeshMove(ref view);
+		}
+
+		// 移动
+		public void MeshMove(ref Vector4 view)
+		{
+			if (m_TileMap == null)
+				return;
+			var meshMgr = this.MeshMgr;
+			meshMgr.MoveMap(ref view);
 		}
 
 		// 跳地图
@@ -528,14 +565,18 @@ namespace TmxCSharp.Renderer
 
 			if (tileSet == null)
 				return;
-
+			
 			TMXMeshNode node = data.userData as TMXMeshNode;
-			if (node == null) {
+			bool hasVertex = node != null;
+			if (!hasVertex) {
 				node = m_MeshMgr.CreateMeshNode ();
 			}
 
 			data.userData = node;
 			node.tileData = data;
+
+			if (hasVertex)
+				return;
 
 			AddVertex2 (col, row, layerIdx, layer.Width, layer.Height, 
 				m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, data, 

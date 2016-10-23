@@ -51,22 +51,23 @@ namespace TmxCSharp.Renderer
 
 			ClipTileMapView (ref view);
 
-			if (!m_InitCenter) {
-				m_InitCenter = true;
-				m_LastCenter = new Vector2 (view.x + (view.z - view.x) / 2f, view.y + (view.w - view.y) / 2f);
+			if (!m_InitLastView) {
 				SearcNodes (ref view);
+				m_InitLastView = true;
+				m_LastView = view;
 			} else {
-			
+				// 开始移动囖
+				MoveNodes (ref view);
 			}
 		}
 
 
-		private void ClipTileMapView(ref Vector4 view)
+		private void ClipTileMapView (ref Vector4 view)
 		{
 			if (m_Tile == null || !m_Tile.IsVaild)
 				return;
 
-			float halfW = ((float)(m_Tile.Size.TileWidth * m_Tile.Size.Width))/2f;
+			float halfW = ((float)(m_Tile.Size.TileWidth * m_Tile.Size.Width)) / 2f;
 			float halfH = ((float)(m_Tile.Size.TileHeight * m_Tile.Size.Height)) / 2f;
 
 			// Y判断
@@ -84,8 +85,7 @@ namespace TmxCSharp.Renderer
 				float delta = -halfW - view.x;
 				view.x = -halfW;
 				view.z += delta;
-			} else if (view.z > halfW)
-			{
+			} else if (view.z > halfW) {
 				float delta = view.z - halfW;
 				view.z = halfW;
 				view.x -= delta;
@@ -94,13 +94,13 @@ namespace TmxCSharp.Renderer
 
 		private int GetTileRow (float y, bool isCeil)
 		{
-			float f = ((float)m_Tile.Size.Height)/2f - y/((float)m_Tile.Size.TileHeight);
+			float f = ((float)m_Tile.Size.Height) / 2f - y / ((float)m_Tile.Size.TileHeight);
 
 			int ret;
 			if (isCeil)
-				ret = Mathf.CeilToInt(f) + 2;
+				ret = Mathf.CeilToInt (f) + 2;
 			else
-				ret = Mathf.FloorToInt(f);
+				ret = Mathf.FloorToInt (f);
 
 			if (ret < 0)
 				ret = 0;
@@ -111,19 +111,187 @@ namespace TmxCSharp.Renderer
 
 		private int GetTileCol (float x, bool isCeil)
 		{
-			float f = ((float)m_Tile.Size.Width/2f) + x/((float)m_Tile.Size.TileWidth);
+			float f = ((float)m_Tile.Size.Width / 2f) + x / ((float)m_Tile.Size.TileWidth);
 
 			int ret;
 			if (isCeil)
-				ret = Mathf.CeilToInt(f) + 2;
+				ret = Mathf.CeilToInt (f) + 2;
 			else
-				ret = Mathf.FloorToInt(f);
+				ret = Mathf.FloorToInt (f);
 
 			if (ret < 0)
 				ret = 0;
 			else if (ret >= m_Tile.Size.Width)
 				ret = m_Tile.Size.Width - 1;
 			return ret;
+		}
+
+		private void MoveNodes (ref Vector4 vec)
+		{
+			if (m_Tile == null || !m_Tile.IsVaild)
+				return;
+			
+			var mapLayers = m_Tile.Layers;
+			if (mapLayers == null || mapLayers.Count <= 0)
+				return;
+
+			if (vec == m_LastView)
+				return;
+			
+			int xStart = GetTileCol (vec.x, false);
+			int xEnd = GetTileCol (vec.z, true);
+			int yStart = GetTileRow (vec.y, false);
+			int yEnd = GetTileRow (vec.w, true);
+
+			if (m_XStart == xStart && m_XEnd == xEnd && m_YStart == yStart && m_YEnd == yEnd)
+				return;
+
+			bool isYChanged = false;
+			bool isXChanged = false;
+			for (int i = 0; i < mapLayers.Count; ++i) {
+				var layer = mapLayers [i];
+				if (m_YEnd > yEnd) {
+					isYChanged = true;
+					// Up
+
+
+					// 先InPool
+					for (int r = yEnd + 1; r <= m_YEnd; ++r) {
+						for (int c = m_XStart; c <= m_XEnd; ++c) {
+							int idx = r * layer.Width + c;
+							if (idx >= layer.TileIds.Count)
+								break;
+							TileIdData data = layer.TileIds [idx];
+							InPool (data);
+						}
+					}
+
+					// 再outPool
+					for (int r = yStart; r <= m_YStart; ++r) {
+						if (r < 0)
+							continue;
+						
+						for (int c = m_XStart; c <= m_XEnd; ++c) {
+							int idx = r * layer.Width + c;
+							if (idx >= layer.TileIds.Count)
+								break;
+
+							TileIdData data = layer.TileIds [idx];
+							TMXRenderer render = this.Renderer;
+							render.BuildTMXMeshNode (r, c, i, data);
+						}
+					}
+
+				} else if (m_YStart < yStart) {
+			 
+					isYChanged = true;
+					// Down
+
+					// 先InPool
+					for (int r = m_YStart; r < yStart; ++r) {
+						for (int c = m_XStart; c <= m_XEnd; ++c) {
+							int idx = r * layer.Width + c;
+							if (idx >= layer.TileIds.Count)
+								break;
+							TileIdData data = layer.TileIds [idx];
+							InPool (data);
+						}
+					}
+
+					// 再outPool
+					for (int r = m_YEnd; r <= yEnd; ++r) {
+						if (r < 0)
+							continue;
+
+						for (int c = m_XStart; c <= m_XEnd; ++c) {
+							int idx = r * layer.Width + c;
+							if (idx >= layer.TileIds.Count)
+								break;
+
+							TileIdData data = layer.TileIds [idx];
+							TMXRenderer render = this.Renderer;
+							render.BuildTMXMeshNode (r, c, i, data);
+						}
+					}
+				}
+
+				if (xStart < m_XStart) {
+					// Left
+					isXChanged = true;
+					for (int r = yStart; r <= yEnd; ++r) {
+						for (int c = xEnd + 1; c <= m_XEnd; ++c) {
+							// InPool
+
+							int idx = r * layer.Width + c;
+							if (idx >= layer.TileIds.Count)
+								break;
+							TileIdData data = layer.TileIds [idx];
+							InPool (data);
+						}
+
+						for (int c = xStart; c < m_XStart; ++c)
+						{
+							int idx = r * layer.Width + c;
+							if (idx >= layer.TileIds.Count)
+								break;
+							TileIdData data = layer.TileIds [idx];
+							TMXRenderer render = this.Renderer;
+							render.BuildTMXMeshNode (r, c, i, data);
+						}
+					}
+				} else if (xEnd > m_XEnd)
+				{
+					// right
+					isXChanged = true;
+					for (int r = yStart; r <= yEnd; ++r)
+					{
+						// InPool
+						for (int c = m_XStart; c < xStart; ++c)
+						{
+							int idx = r * layer.Width + c;
+							if (idx >= layer.TileIds.Count)
+								break;
+							TileIdData data = layer.TileIds [idx];
+							InPool (data);
+						}
+
+						// outPool
+						for (int c = m_XEnd + 1; c <= xEnd; ++c)
+						{
+							int idx = r * layer.Width + c;
+							if (idx >= layer.TileIds.Count)
+								break;
+							TileIdData data = layer.TileIds [idx];
+							TMXRenderer render = this.Renderer;
+							render.BuildTMXMeshNode (r, c, i, data);
+						}
+					}
+				}
+			}
+			
+
+
+			/*Debug.LogFormat("MoveStartX: {0} MoveEndX: {1} MoveStartY: {2} MoveEndY: {3}",
+				(xStart - m_XStart).ToString(), (xEnd - m_XEnd).ToString(),
+				(yStart - m_YStart).ToString(), (yEnd - m_YEnd).ToString());
+
+			Debug.LogFormat("LEFT: {0} RIGHT: {1} TOP: {2} BOTTOM: {3}", 
+				xStart.ToString(), xEnd.ToString(), 
+				yStart.ToString().ToString(), yEnd.ToString());*/
+
+			if (isXChanged) {
+				m_XStart = xStart;
+				m_XEnd = xEnd;
+			}
+
+			if (isYChanged) {
+				m_YStart = yStart;
+				m_YEnd = yEnd;
+			}
+
+			if (isXChanged || isYChanged) {
+				m_LastView = vec;
+			}
 		}
 
 		private void SearcNodes (ref Vector4 vec)
@@ -177,8 +345,7 @@ namespace TmxCSharp.Renderer
 					for (int r = m_YStart; r <= m_YEnd; ++r) {
 						for (int c = m_XStart; c <= m_XEnd; ++c) {
 							int idx = r * layer.Width + c;
-							if (idx >= layer.TileIds.Count)
-							{
+							if (idx >= layer.TileIds.Count) {
 								isOut = true;
 								break;
 							}
@@ -194,8 +361,12 @@ namespace TmxCSharp.Renderer
 
 		private void ClearLastCenter ()
 		{
-			m_InitCenter = false;
-			m_LastCenter = Vector2.zero;
+			m_InitLastView = false;
+			m_LastView = Vector4.zero;
+			m_XStart = -1;
+			m_XEnd = -1;
+			m_YStart = -1;
+			m_YEnd = -1;
 		}
 
 		public void Clear ()
@@ -303,8 +474,8 @@ namespace TmxCSharp.Renderer
 		private float m_MapPixelW = 0;
 		private float m_MapPixelH = 0;
 
-		private Vector2 m_LastCenter = Vector2.zero;
-		private bool m_InitCenter = false;
+		private Vector4 m_LastView = Vector4.zero;
+		private bool m_InitLastView = false;
 
 		private GameObject m_GameObj = null;
 		private TMXRenderer m_Renderer = null;

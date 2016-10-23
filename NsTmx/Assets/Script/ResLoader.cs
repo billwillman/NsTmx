@@ -48,34 +48,35 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 
 	void OnGUI()
 	{
+		const float delta = 0.5f;
 		if (Input.GetKeyDown (KeyCode.UpArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
-			vec.y += 0.5f;
+			vec.y += delta;
 			trans.localPosition = vec;
-			m_Renderer.MeshJumpTo (cam);
+			m_Renderer.MeshMove (cam);
 		} else if (Input.GetKeyDown (KeyCode.DownArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
-			vec.y -= 0.5f;
+			vec.y -= delta;
 			trans.localPosition = vec;
-			m_Renderer.MeshJumpTo (cam);
+			m_Renderer.MeshMove (cam);
 		} else if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
-			vec.x -= 0.5f;
+			vec.x -= delta;
 			trans.localPosition = vec;
-			m_Renderer.MeshJumpTo (cam);
+			m_Renderer.MeshMove (cam);
 		} else if (Input.GetKeyDown (KeyCode.RightArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
-			vec.x += 0.5f;
+			vec.x += delta;
 			trans.localPosition = vec;
-			m_Renderer.MeshJumpTo (cam);
+			m_Renderer.MeshMove (cam);
 		}
 
 		if (GUILayout.Button("刷新可視範圍"))
