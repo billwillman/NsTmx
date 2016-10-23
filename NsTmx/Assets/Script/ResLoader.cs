@@ -12,56 +12,77 @@ using TmxCSharp.Renderer;
 public class ResLoader: MonoBehaviour, ITmxLoader
 {
 	private TMXRenderer m_Renderer = null;
-	private Mesh m_Mesh;
+	private Mesh m_Mesh = null;
 
 	public bool IsUseAllMesh = true;
 
 	void Awake()
 	{
 		m_Renderer = GetComponent<TMXRenderer>();
-		m_Mesh = new Mesh();
 	}
 
 	private int Scene = 1;
 
+	private static readonly float delta = 0.5f;
+	private void GoUp()
+	{
+		
+		Camera cam = Camera.main;
+		var trans = cam.transform;
+		Vector3 vec = trans.localPosition;
+		vec.y += delta;
+		trans.localPosition = vec;
+		if (!IsUseAllMesh)
+			m_Renderer.MeshMove (cam);
+	}
+
+	private void GoDown()
+	{
+		Camera cam = Camera.main;
+		var trans = cam.transform;
+		Vector3 vec = trans.localPosition;
+		vec.y -= delta;
+		trans.localPosition = vec;
+		if (!IsUseAllMesh)
+			m_Renderer.MeshMove (cam);
+	}
+
+	private void GoLeft()
+	{
+		Camera cam = Camera.main;
+		var trans = cam.transform;
+		Vector3 vec = trans.localPosition;
+		vec.x -= delta;
+		trans.localPosition = vec;
+		if (!IsUseAllMesh)
+			m_Renderer.MeshMove (cam);
+	}
+
+	private void GoRight()
+	{
+		Camera cam = Camera.main;
+		var trans = cam.transform;
+		Vector3 vec = trans.localPosition;
+		vec.x += delta;
+		trans.localPosition = vec;
+		if (!IsUseAllMesh)
+			m_Renderer.MeshMove (cam);
+	}
+
 	void OnGUI()
 	{
-		const float delta = 0.5f;
+		
 		if (Input.GetKeyDown (KeyCode.UpArrow)) {
-			Camera cam = Camera.main;
-			var trans = cam.transform;
-			Vector3 vec = trans.localPosition;
-			vec.y += delta;
-			trans.localPosition = vec;
-			if (!IsUseAllMesh)
-				m_Renderer.MeshMove (cam);
+			GoUp();
 		} else if (Input.GetKeyDown (KeyCode.DownArrow)) {
-			Camera cam = Camera.main;
-			var trans = cam.transform;
-			Vector3 vec = trans.localPosition;
-			vec.y -= delta;
-			trans.localPosition = vec;
-			if (!IsUseAllMesh)
-				m_Renderer.MeshMove (cam);
+			GoDown();
 		} else if (Input.GetKeyDown (KeyCode.LeftArrow)) {
-			Camera cam = Camera.main;
-			var trans = cam.transform;
-			Vector3 vec = trans.localPosition;
-			vec.x -= delta;
-			trans.localPosition = vec;
-			if (!IsUseAllMesh)
-				m_Renderer.MeshMove (cam);
+			GoLeft();
 		} else if (Input.GetKeyDown (KeyCode.RightArrow)) {
-			Camera cam = Camera.main;
-			var trans = cam.transform;
-			Vector3 vec = trans.localPosition;
-			vec.x += delta;
-			trans.localPosition = vec;
-			if (!IsUseAllMesh)
-				m_Renderer.MeshMove (cam);
+			GoRight();
 		}
 
-		if (GUILayout.Button("切換地圖"))
+		if (GUI.Button(new Rect(0, 0, 100, 100), "切換地圖"))
 		{
 			string fileName;
 			if (Scene == 0)
@@ -82,7 +103,11 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 
 
 				if (IsUseAllMesh)
+				{
+					if (m_Mesh == null)
+						m_Mesh = new Mesh();
 					m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
+				}
 				else
 					m_Renderer.MeshJumpTo(Camera.main);
 
@@ -90,6 +115,26 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
 
 			}
+		}
+
+		if (GUI.Button(new Rect(0, 150, 100, 100), "向上"))
+		{
+			GoUp();
+		}
+
+		if (GUI.Button(new Rect(0, 250, 100, 100), "向下"))
+		{
+			GoDown();
+		}
+
+		if (GUI.Button(new Rect(0, 350, 100, 100), "向左"))
+		{
+			GoLeft();
+		}
+
+		if (GUI.Button(new Rect(0, 450, 100, 100), "向右"))
+		{
+			GoRight();
 		}
 	}
 
