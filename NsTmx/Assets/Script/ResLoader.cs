@@ -55,28 +55,32 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			Vector3 vec = trans.localPosition;
 			vec.y += delta;
 			trans.localPosition = vec;
-			m_Renderer.MeshMove (cam);
+			if (!IsUseAllMesh)
+				m_Renderer.MeshMove (cam);
 		} else if (Input.GetKeyDown (KeyCode.DownArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
 			vec.y -= delta;
 			trans.localPosition = vec;
-			m_Renderer.MeshMove (cam);
+			if (!IsUseAllMesh)
+				m_Renderer.MeshMove (cam);
 		} else if (Input.GetKeyDown (KeyCode.LeftArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
 			vec.x -= delta;
 			trans.localPosition = vec;
-			m_Renderer.MeshMove (cam);
+			if (!IsUseAllMesh)
+				m_Renderer.MeshMove (cam);
 		} else if (Input.GetKeyDown (KeyCode.RightArrow)) {
 			Camera cam = Camera.main;
 			var trans = cam.transform;
 			Vector3 vec = trans.localPosition;
 			vec.x += delta;
 			trans.localPosition = vec;
-			m_Renderer.MeshMove (cam);
+			if (!IsUseAllMesh)
+				m_Renderer.MeshMove (cam);
 		}
 
 		if (GUILayout.Button("刷新可視範圍"))
