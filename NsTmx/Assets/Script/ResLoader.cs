@@ -69,6 +69,41 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			m_Renderer.MeshMove (cam);
 	}
 
+	private void ChangeScene()
+	{
+		string fileName;
+		if (Scene == 0)
+		{
+			fileName = "tmx/TiledSupport-1.bytes";
+			Scene = 1;
+		} else
+		{
+			fileName = "tmx/d107.bytes";
+			Scene = 0;
+		}
+
+		float t = Time.realtimeSinceStartup;
+		if (m_Renderer.LoadMapFromBinaryFile(fileName, this))
+		{
+			float t1 = Time.realtimeSinceStartup;
+			Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
+
+
+			if (IsUseAllMesh)
+			{
+				if (m_Mesh == null)
+					m_Mesh = new Mesh();
+				m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
+			}
+			else
+				m_Renderer.MeshJumpTo(Camera.main);
+
+			float t2 = Time.realtimeSinceStartup;
+			Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
+
+		}
+	}
+
 	void OnGUI()
 	{
 		
@@ -82,39 +117,16 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			GoRight();
 		}
 
-		if (GUI.Button(new Rect(0, 0, 100, 100), "切換地圖"))
+		if (GUI.Button(new Rect(0, 0, 100, 100), "分块地图"))
 		{
-			string fileName;
-			if (Scene == 0)
-			{
-				fileName = "tmx/TiledSupport-1.bytes";
-				Scene = 1;
-			} else
-			{
-				fileName = "tmx/d107.bytes";
-				Scene = 0;
-			}
+			IsUseAllMesh = false;
+			ChangeScene();
+		}
 
-			float t = Time.realtimeSinceStartup;
-			if (m_Renderer.LoadMapFromBinaryFile(fileName, this))
-			{
-				float t1 = Time.realtimeSinceStartup;
-				Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
-
-
-				if (IsUseAllMesh)
-				{
-					if (m_Mesh == null)
-						m_Mesh = new Mesh();
-					m_Renderer.BuildAllToMesh(m_Mesh, gameObject, Camera.main);
-				}
-				else
-					m_Renderer.MeshJumpTo(Camera.main);
-
-				float t2 = Time.realtimeSinceStartup;
-				Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
-
-			}
+		if (GUI.Button(new Rect(150, 0, 100, 100), "整体地图"))
+		{
+			IsUseAllMesh = true;
+			ChangeScene();
 		}
 
 		if (GUI.Button(new Rect(0, 150, 100, 100), "向上"))
