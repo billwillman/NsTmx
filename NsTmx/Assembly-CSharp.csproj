@@ -62,13 +62,17 @@
      <Compile Include="Assets\Script\NsTmx\Models\TileSetImage.cs" />
      <Compile Include="Assets\Script\NsTmx\TMXMeshManager.cs" />
      <Compile Include="Assets\Script\NsTmx\TMXMeshNode.cs" />
+     <Compile Include="Assets\Script\NsTmx\TMXMeshNodeList.cs" />
      <Compile Include="Assets\Script\NsTmx\TMXRenderData.cs" />
      <Compile Include="Assets\Script\NsTmx\TMXRenderer.cs" />
      <Compile Include="Assets\Script\ResLoader.cs" />
      <Compile Include="Assets\Script\Utils\CachedMonoBehaviour.cs" />
+     <Compile Include="Assets\Script\Utils\DisposeObject.cs" />
      <Compile Include="Assets\Script\Utils\FilePathMgr.cs" />
      <Compile Include="Assets\Script\Utils\ObjectPool.cs" />
      <Compile Include="Assets\Script\Utils\Singleton.cs" />
+     <Compile Include="Assets\Script\Utils\StructComparser.cs" />
+     <Compile Include="Assets\Script\Utils\TimerMgr.cs" />
      <Compile Include="Assets\Script\XmlParser\XMLNode.cs" />
      <Compile Include="Assets\Script\XmlParser\XMLNodeList.cs" />
      <Compile Include="Assets\Script\XmlParser\XMLParser.cs" />

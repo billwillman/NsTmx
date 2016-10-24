@@ -104,6 +104,12 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 		}
 	}
 
+	void Update()
+	{
+		TimerMgr.Instance.ScaleTick(Time.deltaTime);
+		TimerMgr.Instance.UnScaleTick(Time.unscaledDeltaTime);
+	}
+
 	void OnGUI()
 	{
 		

@@ -1,10 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\ResLoader.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\NsTmx\TMXMeshNodeList.cs">
     <Files>
-      <File FileName="Assets\Script\ResLoader.cs" Line="39" Column="32" />
-      <File FileName="Assets\Script\NsTmx\TMXRenderer.cs" Line="484" Column="3" />
-      <File FileName="Assets\Script\NsTmx\TMXMeshManager.cs" Line="33" Column="3" />
+      <File FileName="Assets\Script\NsTmx\TMXMeshManager.cs" Line="328" Column="17" />
+      <File FileName="Assets\Script\NsTmx\TMXMeshNodeList.cs" Line="43" Column="40" />
+      <File FileName="..\..\UnityResourceMgr\UnityResourceMgr\Assets\Scripts\Res\AssetLoader.cs" Line="23" Column="1" />
+      <File FileName="Assets\Script\ResLoader.cs" Line="99" Column="25" />
+      <File FileName="Assets\Script\NsTmx\TMXRenderer.cs" Line="531" Column="13" />
+      <File FileName="Assets\Script\Utils\StructComparser.cs" Line="4" Column="16" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

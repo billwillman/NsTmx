@@ -10,11 +10,11 @@ namespace TmxCSharp.Renderer
 	// TMX可视范围的MESH管理
 	public class TMXMeshManager: MonoBehaviour
 	{
-		
+		/*
 		void Start()
 		{
 			InitPool();
-		}
+		}*/
 
 		// view可视范围 view已经是地图范围
 		private void OpenMap (ref Vector4 view, TileMap map, Camera cam)
@@ -153,6 +153,8 @@ namespace TmxCSharp.Renderer
 
 			bool isYChanged = false;
 			bool isXChanged = false;
+			TMXRenderer render = this.Renderer;
+			TMXMeshNodeLoaderList.Instance.Renderer = render;
 			for (int i = 0; i < mapLayers.Count; ++i) {
 				var layer = mapLayers [i];
 				if (m_YEnd > yEnd) {
@@ -166,6 +168,9 @@ namespace TmxCSharp.Renderer
 							int idx = r * layer.Width + c;
 							if (idx >= layer.TileIds.Count)
 								break;
+
+							TMXMeshNodeLoaderList.Instance.RemoveLoader(r, c, i);
+
 							TileIdData data = layer.TileIds [idx];
 							InPool (data);
 						}
@@ -182,8 +187,8 @@ namespace TmxCSharp.Renderer
 								break;
 
 							TileIdData data = layer.TileIds [idx];
-							TMXRenderer render = this.Renderer;
-							render.BuildTMXMeshNode (r, c, i, data);
+							TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
+							//render.BuildTMXMeshNode (r, c, i, data);
 						}
 					}
 
@@ -198,6 +203,8 @@ namespace TmxCSharp.Renderer
 							int idx = r * layer.Width + c;
 							if (idx >= layer.TileIds.Count)
 								break;
+							
+							TMXMeshNodeLoaderList.Instance.RemoveLoader(r, c, i);
 							TileIdData data = layer.TileIds [idx];
 							InPool (data);
 						}
@@ -214,8 +221,8 @@ namespace TmxCSharp.Renderer
 								break;
 
 							TileIdData data = layer.TileIds [idx];
-							TMXRenderer render = this.Renderer;
-							render.BuildTMXMeshNode (r, c, i, data);
+							TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
+							//render.BuildTMXMeshNode (r, c, i, data);
 						}
 					}
 				}
@@ -230,6 +237,7 @@ namespace TmxCSharp.Renderer
 							int idx = r * layer.Width + c;
 							if (idx >= layer.TileIds.Count)
 								break;
+							TMXMeshNodeLoaderList.Instance.RemoveLoader(r, c, i);
 							TileIdData data = layer.TileIds [idx];
 							InPool (data);
 						}
@@ -240,8 +248,8 @@ namespace TmxCSharp.Renderer
 							if (idx >= layer.TileIds.Count)
 								break;
 							TileIdData data = layer.TileIds [idx];
-							TMXRenderer render = this.Renderer;
-							render.BuildTMXMeshNode (r, c, i, data);
+							TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
+							//render.BuildTMXMeshNode (r, c, i, data);
 						}
 					}
 				} else if (xEnd > m_XEnd)
@@ -256,6 +264,7 @@ namespace TmxCSharp.Renderer
 							int idx = r * layer.Width + c;
 							if (idx >= layer.TileIds.Count)
 								break;
+							TMXMeshNodeLoaderList.Instance.RemoveLoader(r, c, i);
 							TileIdData data = layer.TileIds [idx];
 							InPool (data);
 						}
@@ -267,8 +276,8 @@ namespace TmxCSharp.Renderer
 							if (idx >= layer.TileIds.Count)
 								break;
 							TileIdData data = layer.TileIds [idx];
-							TMXRenderer render = this.Renderer;
-							render.BuildTMXMeshNode (r, c, i, data);
+							TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
+							//render.BuildTMXMeshNode (r, c, i, data);
 						}
 					}
 				}
@@ -316,7 +325,9 @@ namespace TmxCSharp.Renderer
 
 			if (m_YStart >= m_YEnd || m_XStart >= m_XEnd)
 				return;
-
+			
+			TMXRenderer render = this.Renderer;
+			TMXMeshNodeLoaderList.Instance.Renderer = render;
 			for (int i = 0; i < mapLayers.Count; ++i) {
 				var layer = mapLayers [i];
 				for (int r = m_YStart; r <= m_YEnd; ++r) {
@@ -326,8 +337,8 @@ namespace TmxCSharp.Renderer
 							return;
 						
 						TileIdData data = layer.TileIds [idx];
-						TMXRenderer render = this.Renderer;
-						render.BuildTMXMeshNode (r, c, i, data);
+						TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
+						//render.BuildTMXMeshNode (r, c, i, data);
 					
 					}
 				}
@@ -337,6 +348,7 @@ namespace TmxCSharp.Renderer
 
 		private void ClearNodes ()
 		{
+			TMXMeshNodeLoaderList.Instance.Clear();
 			if (IsVaildTile) {
 				var mapLayers = m_Tile.Layers;
 				if (mapLayers == null)
@@ -463,6 +475,14 @@ namespace TmxCSharp.Renderer
 			get {
 				return (m_XStart >= 0) && (m_XEnd >= 0) && (m_XStart < m_XEnd) &&
 				(m_YStart >= 0) && (m_YEnd >= 0) && (m_YStart < m_YEnd) && m_Tile != null && m_Tile.IsVaild;
+			}
+		}
+
+		public int PoolCount
+		{
+			get
+			{
+				return m_Pool.Count;
 			}
 		}
 

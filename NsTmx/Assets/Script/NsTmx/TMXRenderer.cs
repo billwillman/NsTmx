@@ -799,6 +799,14 @@ namespace TmxCSharp.Renderer
 		public float m_Scale = 1.0f;
 		#endif
 
+		public bool HasCacheMeshNode
+		{
+			get
+			{
+				return (m_MeshMgr != null) && (m_MeshMgr.PoolCount > 0);
+			}
+		}
+
 		private string m_ResRootPath = string.Empty;
 		private TileMap m_TileMap = null;
 		private TMXMeshManager m_MeshMgr = null;
