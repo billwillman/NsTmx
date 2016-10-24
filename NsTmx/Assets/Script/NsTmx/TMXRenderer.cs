@@ -542,6 +542,30 @@ namespace TmxCSharp.Renderer
 			targetTrans.localScale = targetScale;
 		}
 
+		/*
+		internal TMXMeshNode CreateTMXMeshNode(int minR, int maxR, int minC, int maxC, int layerIdx)
+		{
+			if (layerIdx < 0 || m_TileMap == null)
+				return;
+
+			var layers = m_TileMap.Layers;
+			if (layers == null || layers.Count <= 0 || layerIdx >= layers.Count)
+				return;
+
+			if (minR < 0)
+				minR = 0;
+			if (maxR >= m_TileMap.Size.Height)
+				maxR = m_TileMap.Size.Height - 1;
+			if (minC < 0)
+				minC = 0;
+			if (maxC >= m_TileMap.Size.Width)
+				maxC = m_TileMap.Size.Width - 1;
+
+			for (int r = minR; r <= maxR; ++r) {
+				
+			}
+		}*/
+
 		internal void BuildTMXMeshNode (int row, int col, int layerIdx, TileIdData data)
 		{
 			if (layerIdx < 0 || data == null || m_TileMap == null)

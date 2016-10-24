@@ -403,6 +403,7 @@ namespace TmxCSharp.Renderer
 			obj.name = "MeshTitle";
 			obj.SetActive (false);
 			TMXMeshNode ret = obj.AddComponent<TMXMeshNode> ();
+			ret.InitBuf (4);
 			ret.IsDestroy = false;
 			var trans = obj.transform;
 			trans.parent = this.transform;

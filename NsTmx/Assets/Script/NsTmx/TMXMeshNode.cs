@@ -81,12 +81,19 @@ namespace TmxCSharp.Renderer
 			}
 		}
 
+		public void InitBuf(int vertCnt)
+		{
+			m_VertBuf = new Vector3[vertCnt];
+			m_UVBuf = new Vector2[vertCnt];
+			m_IndexBuf = new int[vertCnt];
+		}
+
 		private Mesh m_Mesh = null;
 		private MeshRenderer m_Render = null;
 
-		private Vector3[] m_VertBuf = new Vector3[4];
-		private Vector2[] m_UVBuf = new Vector2[4];
-		private int[] m_IndexBuf = new int[4];
+		private Vector3[] m_VertBuf = null;
+		private Vector2[] m_UVBuf = null;
+		private int[] m_IndexBuf = null;
 	}
 
 }
