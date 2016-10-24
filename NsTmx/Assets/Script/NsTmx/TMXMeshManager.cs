@@ -99,6 +99,9 @@ namespace TmxCSharp.Renderer
 
 		private int GetTileRow (float y, bool isCeil)
 		{
+			if (m_Tile == null || !m_Tile.IsVaild)
+				return 0;
+			
 			float f = ((float)m_Tile.Size.Height) / 2f - y / ((float)m_Tile.Size.TileHeight);
 
 			int ret;
@@ -109,8 +112,17 @@ namespace TmxCSharp.Renderer
 
 			if (ret < 0)
 				ret = 0;
-			else if (ret >= m_Tile.Size.Height)
+			else if (ret >= m_Tile.Size.Height) {
 				ret = m_Tile.Size.TileHeight - 1;
+				for (int l = 0; l < m_Tile.Layers.Count; ++l) {
+					var lay = m_Tile.Layers [l];
+					if (lay == null)
+						continue;
+					if (lay.Height > ret)
+						ret = lay.Height;
+				}
+
+			}
 			return ret;
 		}
 
@@ -126,8 +138,16 @@ namespace TmxCSharp.Renderer
 
 			if (ret < 0)
 				ret = 0;
-			else if (ret >= m_Tile.Size.Width)
+			else if (ret >= m_Tile.Size.Width) {
 				ret = m_Tile.Size.Width - 1;
+				for (int l = 0; l < m_Tile.Layers.Count; ++l) {
+					var lay = m_Tile.Layers [l];
+					if (lay == null)
+						continue;
+					if (lay.Width > ret)
+						ret = lay.Width;
+				}
+			}
 			return ret;
 		}
 
@@ -330,17 +350,23 @@ namespace TmxCSharp.Renderer
 			TMXMeshNodeLoaderList.Instance.Renderer = render;
 			for (int i = 0; i < mapLayers.Count; ++i) {
 				var layer = mapLayers [i];
+				bool isBreak = false;
 				for (int r = m_YStart; r <= m_YEnd; ++r) {
 					for (int c = m_XStart; c <= m_XEnd; ++c) {
 						int idx = r * layer.Width + c;
-						if (idx >= layer.TileIds.Count)
-							return;
+						if (idx >= layer.TileIds.Count) {
+							isBreak = true;
+							break;
+						}
 						
 						TileIdData data = layer.TileIds [idx];
 						TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
 						//render.BuildTMXMeshNode (r, c, i, data);
 					
 					}
+
+					if (isBreak)
+						break;
 				}
 			}
 

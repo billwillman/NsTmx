@@ -74,7 +74,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 		string fileName;
 		if (Scene == 0)
 		{
-			fileName = "tmx/TiledSupport-1.bytes";
+			fileName = "tmx/jiazu01.bytes";
 			Scene = 1;
 		} else
 		{
