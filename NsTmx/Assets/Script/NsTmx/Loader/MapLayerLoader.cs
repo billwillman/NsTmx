@@ -39,6 +39,10 @@ namespace TmxCSharp.Loader
                 XMLNode layerNode = layerList[i] as XMLNode;
                 if (layerNode == null)
                     continue;
+				string ss = layerNode.GetValue("@visible");
+				if (!string.IsNullOrEmpty(ss) && ss == "0")
+					continue;
+
                 MapLayer mapLayer = GetLayerMetadata(layerNode);
                 if (mapLayer == null)
                     continue;

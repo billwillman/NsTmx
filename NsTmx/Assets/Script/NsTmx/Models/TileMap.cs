@@ -6,6 +6,18 @@ namespace TmxCSharp.Models
 {
     public class TileMap
     {
+		public enum  TileMapType
+		{
+			ttOrient,
+			ttIsometricr
+		}
+
+		public TileMapType TileType
+		{
+			get;
+			internal set;
+		}
+
 		public TileMap(TileMapSize size, IList<TileSet> tileSets, IList<MapLayer> layers, IList<ObjectGroup> gps)
         {
             if (size == null)

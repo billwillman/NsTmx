@@ -3,6 +3,7 @@ using System.IO;
 using TmxCSharp.Models;
 using XmlParser;
 using UnityEngine;
+using Utils;
 
 namespace TmxCSharp.Loader
 {
@@ -23,6 +24,8 @@ namespace TmxCSharp.Loader
     {
         private const string SupportedVersion = "1.0";
         private const string SupportedOrientation = "orthogonal";
+		// 45度
+		private const string SupportedIsometric = "isometric";
 
 		public static TileMap Parse(string fileName, ITmxLoader loader)
         {
@@ -85,7 +88,9 @@ namespace TmxCSharp.Loader
 
 			IList<ObjectGroup> gps = ObjectLayerLoader.LoadObjectGroup (map);
 
-			return new TileMap(tileMapSize, tileSets, layers, gps);
+			var ret = new TileMap(tileMapSize, tileSets, layers, gps);
+			ret.TileType = m_isIsometricr ? TileMap.TileMapType.ttIsometricr: TileMap.TileMapType.ttOrient;
+			return ret;
         }
 
 		// 二进制文件读取
@@ -103,11 +108,14 @@ namespace TmxCSharp.Loader
 			MemoryStream stream = new MemoryStream(buf);
 			TileMapSize tileMapSize = TileMapSizeLoader.LoadTileMapSize(stream);
 			TileIdLoader tileIdLoader = new TileIdLoader(tileMapSize);
+			int mapType = FilePathMgr.Instance.ReadInt(stream);
 			IList<TileSet> tileSets = TileSetLoader.LoadTileSets(stream);
 			IList<MapLayer> layers = MapLayerLoader.LoadMapLayers(stream, tileIdLoader);
 			IList<ObjectGroup> gps = ObjectLayerLoader.LoadObjectGroup (stream);
 
-			return new TileMap(tileMapSize, tileSets, layers, gps);
+			var ret = new TileMap(tileMapSize, tileSets, layers, gps);
+			ret.TileType = (TileMap.TileMapType)mapType;
+			return ret;
 		}
 
 		public static void SaveToBinary(string fileName, TileMap map)
@@ -117,6 +125,7 @@ namespace TmxCSharp.Loader
 
 			FileStream stream = new FileStream(fileName, FileMode.Create);
 			TileMapSizeLoader.SaveToBinary(stream, map.Size);
+			FilePathMgr.Instance.WriteInt(stream, (int)map.TileType);
 			TileSetLoader.SaveToBinary(stream, map.TileSets);
 			MapLayerLoader.SaveToBinary(stream, map.Layers, map.Size);
 			ObjectLayerLoader.SaveToBinary(stream, map.ObjGroups);
@@ -125,7 +134,7 @@ namespace TmxCSharp.Loader
 			stream.Dispose();
 		}
 
-
+		private static bool m_isIsometricr = false;
         private static bool AssertRequirements(XMLNode map)
         {
             // 读取版本信息
@@ -139,15 +148,19 @@ namespace TmxCSharp.Loader
 				return false;
             }
 
+			m_isIsometricr = false;
             string orientation = map.GetValue("@orientation");
+			bool isVaildFmt = (orientation == SupportedOrientation) || (orientation == SupportedIsometric);
 
-            if (orientation != SupportedOrientation)
+			if (!isVaildFmt)
             {
 				#if DEBUG
 				Debug.LogErrorFormat("Unsupported orientation '{0}'. Only '{1}' orientation is supported.", orientation, SupportedOrientation);
                 #endif
 				return false;
             }
+
+			m_isIsometricr = orientation == SupportedIsometric;
 
             return true;
         }
