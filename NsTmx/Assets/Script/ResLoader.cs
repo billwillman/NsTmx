@@ -21,7 +21,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 		m_Renderer = GetComponent<TMXRenderer>();
 	}
 
-	private int Scene = 1;
+	private int Scene = 0;
 
 	private static readonly float delta = 0.5f;
 	private void GoUp()
