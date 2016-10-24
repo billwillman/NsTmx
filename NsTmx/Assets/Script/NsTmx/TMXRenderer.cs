@@ -70,6 +70,11 @@ namespace TmxCSharp.Renderer
 			return true;
 		}
 
+		public void Close()
+		{
+			Clear();
+		}
+
 		private void Clear ()
 		{
 			ClearTileData ();
