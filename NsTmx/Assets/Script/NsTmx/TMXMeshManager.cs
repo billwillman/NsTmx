@@ -128,6 +128,9 @@ namespace TmxCSharp.Renderer
 
 		private int GetTileCol (float x, bool isCeil)
 		{
+			if (m_Tile == null || !m_Tile.IsVaild)
+				return 0;
+			
 			float f = ((float)m_Tile.Size.Width / 2f) + x / ((float)m_Tile.Size.TileWidth);
 
 			int ret;
