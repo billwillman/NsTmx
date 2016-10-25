@@ -154,6 +154,14 @@ namespace TmxCSharp.Renderer
 			return ret;
 		}
 
+		private void BuildTMXMeshNode (int r, int c, int layer, TileIdData data)
+		{
+			TMXRenderer render = this.Renderer;
+			TMXMeshNodeLoaderList.Instance.Renderer = render;
+			TMXMeshNodeLoaderList.Instance.AddLoader(r, c, layer, data);
+			//render.BuildTMXMeshNode (r, c, layer, data);
+		}
+
 		private void MoveNodes (ref Vector4 vec)
 		{
 			if (m_Tile == null || !m_Tile.IsVaild)
@@ -173,11 +181,10 @@ namespace TmxCSharp.Renderer
 
 			if (m_XStart == xStart && m_XEnd == xEnd && m_YStart == yStart && m_YEnd == yEnd)
 				return;
-
+			
 			bool isYChanged = false;
 			bool isXChanged = false;
-			TMXRenderer render = this.Renderer;
-			TMXMeshNodeLoaderList.Instance.Renderer = render;
+
 			for (int i = 0; i < mapLayers.Count; ++i) {
 				var layer = mapLayers [i];
 				if (m_YEnd > yEnd) {
@@ -192,7 +199,7 @@ namespace TmxCSharp.Renderer
 							if (idx >= layer.TileIds.Count)
 								break;
 
-							TMXMeshNodeLoaderList.Instance.RemoveLoader(r, c, i);
+							TMXMeshNodeLoaderList.Instance.RemoveLoader (r, c, i);
 
 							TileIdData data = layer.TileIds [idx];
 							InPool (data);
@@ -210,8 +217,7 @@ namespace TmxCSharp.Renderer
 								break;
 
 							TileIdData data = layer.TileIds [idx];
-							TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
-							//render.BuildTMXMeshNode (r, c, i, data);
+							BuildTMXMeshNode (r, c, i, data);
 						}
 					}
 
@@ -227,7 +233,7 @@ namespace TmxCSharp.Renderer
 							if (idx >= layer.TileIds.Count)
 								break;
 							
-							TMXMeshNodeLoaderList.Instance.RemoveLoader(r, c, i);
+							TMXMeshNodeLoaderList.Instance.RemoveLoader (r, c, i);
 							TileIdData data = layer.TileIds [idx];
 							InPool (data);
 						}
@@ -244,8 +250,7 @@ namespace TmxCSharp.Renderer
 								break;
 
 							TileIdData data = layer.TileIds [idx];
-							TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
-							//render.BuildTMXMeshNode (r, c, i, data);
+							BuildTMXMeshNode (r, c, i, data);
 						}
 					}
 				}
@@ -260,47 +265,40 @@ namespace TmxCSharp.Renderer
 							int idx = r * layer.Width + c;
 							if (idx >= layer.TileIds.Count)
 								break;
-							TMXMeshNodeLoaderList.Instance.RemoveLoader(r, c, i);
+							TMXMeshNodeLoaderList.Instance.RemoveLoader (r, c, i);
 							TileIdData data = layer.TileIds [idx];
 							InPool (data);
 						}
 
-						for (int c = xStart; c < m_XStart; ++c)
-						{
+						for (int c = xStart; c < m_XStart; ++c) {
 							int idx = r * layer.Width + c;
 							if (idx >= layer.TileIds.Count)
 								break;
 							TileIdData data = layer.TileIds [idx];
-							TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
-							//render.BuildTMXMeshNode (r, c, i, data);
+							BuildTMXMeshNode (r, c, i, data);
 						}
 					}
-				} else if (xEnd > m_XEnd)
-				{
+				} else if (xEnd > m_XEnd) {
 					// right
 					isXChanged = true;
-					for (int r = yStart; r <= yEnd; ++r)
-					{
+					for (int r = yStart; r <= yEnd; ++r) {
 						// InPool
-						for (int c = m_XStart; c < xStart; ++c)
-						{
+						for (int c = m_XStart; c < xStart; ++c) {
 							int idx = r * layer.Width + c;
 							if (idx >= layer.TileIds.Count)
 								break;
-							TMXMeshNodeLoaderList.Instance.RemoveLoader(r, c, i);
+							TMXMeshNodeLoaderList.Instance.RemoveLoader (r, c, i);
 							TileIdData data = layer.TileIds [idx];
 							InPool (data);
 						}
 
 						// outPool
-						for (int c = m_XEnd + 1; c <= xEnd; ++c)
-						{
+						for (int c = m_XEnd + 1; c <= xEnd; ++c) {
 							int idx = r * layer.Width + c;
 							if (idx >= layer.TileIds.Count)
 								break;
 							TileIdData data = layer.TileIds [idx];
-							TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
-							//render.BuildTMXMeshNode (r, c, i, data);
+							BuildTMXMeshNode (r, c, i, data);
 						}
 					}
 				}
@@ -349,8 +347,6 @@ namespace TmxCSharp.Renderer
 			if (m_YStart >= m_YEnd || m_XStart >= m_XEnd)
 				return;
 			
-			TMXRenderer render = this.Renderer;
-			TMXMeshNodeLoaderList.Instance.Renderer = render;
 			for (int i = 0; i < mapLayers.Count; ++i) {
 				var layer = mapLayers [i];
 				bool isBreak = false;
@@ -363,8 +359,7 @@ namespace TmxCSharp.Renderer
 						}
 						
 						TileIdData data = layer.TileIds [idx];
-						TMXMeshNodeLoaderList.Instance.AddLoader(r, c, i, data);
-						//render.BuildTMXMeshNode (r, c, i, data);
+						BuildTMXMeshNode (r, c, i, data);
 					
 					}
 
@@ -377,7 +372,7 @@ namespace TmxCSharp.Renderer
 
 		private void ClearNodes ()
 		{
-			TMXMeshNodeLoaderList.Instance.Clear();
+			TMXMeshNodeLoaderList.Instance.Clear ();
 			if (IsVaildTile) {
 				var mapLayers = m_Tile.Layers;
 				if (mapLayers == null)
@@ -426,19 +421,37 @@ namespace TmxCSharp.Renderer
 			ClearLastCenter ();
 		}
 
+		private GameObject m_CloneNode = null;
+
 		private TMXMeshNode _CreateMeshNode ()
 		{
-			GameObject obj = new GameObject ();
-			obj.name = "MeshTitle";
-			obj.SetActive (false);
-			TMXMeshNode ret = obj.AddComponent<TMXMeshNode> ();
-			ret.InitBuf (4);
+			if (m_CloneNode == null) {
+				// 提升性能
+				GameObject obj = new GameObject ();
+				obj.name = "MeshTitle";
+				obj.SetActive (false);
+				TMXMeshNode script = obj.AddComponent<TMXMeshNode> ();
+				//script.InitBuf (4);
+				//script.IsDestroy = false;
+				var trans = obj.transform;
+				trans.parent = this.transform;
+				trans.localPosition = Vector3.zero;
+				trans.localScale = Vector3.one;
+				trans.localRotation = Quaternion.identity;
+
+				m_CloneNode = obj;
+			}
+
+			GameObject obj1 = GameObject.Instantiate(m_CloneNode);
+			var trans1 = obj1.transform;
+			trans1.parent = this.transform;
+			trans1.localPosition = Vector3.zero;
+			trans1.localScale = Vector3.one;
+			trans1.localRotation = Quaternion.identity;
+
+			TMXMeshNode ret = obj1.GetComponent<TMXMeshNode>();
+			ret.InitBuf(4);
 			ret.IsDestroy = false;
-			var trans = obj.transform;
-			trans.parent = this.transform;
-			trans.localPosition = Vector3.zero;
-			trans.localScale = Vector3.one;
-			trans.localRotation = Quaternion.identity;
 
 			return ret;
 		}
@@ -508,10 +521,8 @@ namespace TmxCSharp.Renderer
 			}
 		}
 
-		public int PoolCount
-		{
-			get
-			{
+		public int PoolCount {
+			get {
 				return m_Pool.Count;
 			}
 		}

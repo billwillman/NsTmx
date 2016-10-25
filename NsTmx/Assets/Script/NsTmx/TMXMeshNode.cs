@@ -20,7 +20,8 @@ namespace TmxCSharp.Renderer
 		{
 			if (m_Mesh == null) {
 				m_Mesh = new Mesh ();
-				MeshFilter filter = GetComponent<MeshFilter> ();
+				m_Mesh.MarkDynamic();
+				MeshFilter filter = this.Filter;
 				filter.sharedMesh = m_Mesh;
 			}
 
@@ -35,6 +36,16 @@ namespace TmxCSharp.Renderer
 				if (m_Render == null)
 					m_Render = GetComponent<MeshRenderer> ();
 				return m_Render;
+			}
+		}
+
+		public MeshFilter Filter
+		{
+			get
+			{
+				if (m_Filter == null)
+					m_Filter = GetComponent<MeshFilter>();
+				return m_Filter;
 			}
 		}
 
@@ -90,6 +101,7 @@ namespace TmxCSharp.Renderer
 
 		private Mesh m_Mesh = null;
 		private MeshRenderer m_Render = null;
+		private MeshFilter m_Filter = null;
 
 		private Vector3[] m_VertBuf = null;
 		private Vector2[] m_UVBuf = null;

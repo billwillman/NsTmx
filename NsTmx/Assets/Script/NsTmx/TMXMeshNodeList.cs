@@ -205,7 +205,7 @@ namespace TmxCSharp.Renderer
 			var node = m_List.First;
 
 			int cnt = 1;
-			const int cMaxLoad = 100;
+			const int cMaxLoad = 500;
 			while (node != null && cnt <= cMaxLoad)
 			{
 				var nextNode = node.Next;
