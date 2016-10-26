@@ -25,7 +25,7 @@ namespace TmxCSharp.Loader
         private const string SupportedVersion = "1.0";
         private const string SupportedOrientation = "orthogonal";
 		// 45度
-		private const string SupportedIsometric = "isometric";
+		private const string SupportedStaggered = "staggered";
 
 		public static TileMap Parse(string fileName, ITmxLoader loader)
         {
@@ -89,7 +89,7 @@ namespace TmxCSharp.Loader
 			IList<ObjectGroup> gps = ObjectLayerLoader.LoadObjectGroup (map);
 
 			var ret = new TileMap(tileMapSize, tileSets, layers, gps);
-			ret.TileType = m_isIsometricr ? TileMap.TileMapType.ttIsometricr: TileMap.TileMapType.ttOrient;
+			ret.TileType = m_isStaggered ? TileMap.TileMapType.ttStaggered: TileMap.TileMapType.ttOrient;
 			return ret;
         }
 
@@ -134,7 +134,7 @@ namespace TmxCSharp.Loader
 			stream.Dispose();
 		}
 
-		private static bool m_isIsometricr = false;
+		private static bool m_isStaggered = false;
         private static bool AssertRequirements(XMLNode map)
         {
             // 读取版本信息
@@ -148,9 +148,9 @@ namespace TmxCSharp.Loader
 				return false;
             }
 
-			m_isIsometricr = false;
+			m_isStaggered = false;
             string orientation = map.GetValue("@orientation");
-			bool isVaildFmt = (orientation == SupportedOrientation) || (orientation == SupportedIsometric);
+			bool isVaildFmt = (orientation == SupportedOrientation) || (orientation == SupportedStaggered);
 
 			if (!isVaildFmt)
             {
@@ -160,7 +160,7 @@ namespace TmxCSharp.Loader
 				return false;
             }
 
-			m_isIsometricr = orientation == SupportedIsometric;
+			m_isStaggered = orientation == SupportedStaggered;
 
             return true;
         }

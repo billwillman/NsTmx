@@ -9,7 +9,7 @@ namespace TmxCSharp.Models
 		public enum  TileMapType
 		{
 			ttOrient,
-			ttIsometricr
+			ttStaggered
 		}
 
 		public TileMapType TileType
