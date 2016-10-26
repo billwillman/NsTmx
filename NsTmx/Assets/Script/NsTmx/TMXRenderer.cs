@@ -255,7 +255,7 @@ namespace TmxCSharp.Renderer
             Vector2 _pivotPoint;
 
             float z = -layerIdx * 0.01f;
-            if (tileType == TileMap.TileMapType.ttStaggered)
+			if (tileType == TileMap.TileMapType.ttIsometric)
             {
                // col = col * 2 + row % 2;
                 float pX = 1f / 2f + (row - col) * _meshsize_.x / 2f - 1f;
