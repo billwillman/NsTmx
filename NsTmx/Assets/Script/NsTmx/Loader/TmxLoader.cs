@@ -25,7 +25,7 @@ namespace TmxCSharp.Loader
         private const string SupportedVersion = "1.0";
         private const string SupportedOrientation = "orthogonal";
 		// 45度
-		private const string SupportedStaggered = "staggered";
+		private const string SupportedStaggered = "isometric";
 
 		public static TileMap Parse(string fileName, ITmxLoader loader)
         {

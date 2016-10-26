@@ -130,9 +130,10 @@ namespace TmxCSharp.Renderer
 			int layerIdx, int layerWidth, int layerHeight,
 			int baseTileWidth, int baseTileHeight, 
 			TileIdData tileData, TmxTileData tmxTile
-		)
+        )
 		{
-			TMXMeshNode node = tileData.userData as TMXMeshNode;
+          
+            TMXMeshNode node = tileData.userData as TMXMeshNode;
 			GameObject gameObj = node.gameObject;
 			if (!gameObj.activeSelf) {
 				gameObj.SetActive (true);
@@ -147,8 +148,11 @@ namespace TmxCSharp.Renderer
 			int[] indexList = node.IndexBuf;
 
 			Vector2 _meshsize_ = new Vector2 (1.0f / ((float)layerWidth), 1.0f / ((float)layerHeight));
-			Vector2 _pivotPoint = new Vector2 ((col - 1) * _meshsize_.x * -1 - _meshsize_.x / 2f, (row - 1) * _meshsize_.y + _meshsize_.y / 2f); 
-			_pivotPoint.x += .5f;
+
+            Vector2 _pivotPoint = new Vector2((col - 1) * _meshsize_.x * -1 - _meshsize_.x / 2f, (row - 1) * _meshsize_.y + _meshsize_.y / 2f);
+            float z = -layerIdx * 0.01f;
+
+            _pivotPoint.x += .5f;
 			_pivotPoint.y -= .5f;
 			float dx = ((float)tile.TileWidth / (float)baseTileWidth) - 1;
 			float dy = ((float)tile.TileHeight / (float)baseTileHeight) - 1;
@@ -189,8 +193,6 @@ namespace TmxCSharp.Renderer
 				uvY0 = uvY;
 				uvY1 = uvY - uvPerY;
 			}
-
-			float z = -layerIdx * 0.01f;
 
 			int vertIdx = 0;
 			int indexIdx = 0;
@@ -246,17 +248,41 @@ namespace TmxCSharp.Renderer
 			TileIdData tileData, TileSet tile,
 			List<Vector3> vertList, List<Vector2> uvList, List<int> indexList
 		// ,Dictionary<KeyValuePair<int, int>, int> XYToVertIdx
-
+           , TileMap.TileMapType tileType = TileMap.TileMapType.ttOrient
 		)
 		{
-			Vector2 _meshsize_ = new Vector2 (1.0f / ((float)layerWidth), 1.0f / ((float)layerHeight));
-			Vector2 _pivotPoint = new Vector2 ((col - 1) * _meshsize_.x * -1 - _meshsize_.x / 2f, (row - 1) * _meshsize_.y + _meshsize_.y / 2f); 
-			_pivotPoint.x += .5f;
-			_pivotPoint.y -= .5f;
-			float dx = ((float)tile.TileWidth / (float)baseTileWidth) - 1;
+            Vector2 _meshsize_ = new Vector2(1.0f / ((float)layerWidth), 1.0f / ((float)layerHeight));
+            Vector2 _pivotPoint;
+
+            float z = -layerIdx * 0.01f;
+            if (tileType == TileMap.TileMapType.ttStaggered)
+            {
+               // col = col * 2 + row % 2;
+                float pX = 1f / 2f + (row - col) * _meshsize_.x / 2f - 1f;
+                float pY = (col + row) * _meshsize_.y / 2f;
+                _pivotPoint = new Vector2(pX, pY);
+                z -= 0.001f * (col + row);
+            }
+            else
+            {
+                _pivotPoint = new Vector2((col - 1) * _meshsize_.x * -1 - _meshsize_.x / 2f, (row - 1) * _meshsize_.y + _meshsize_.y / 2f);
+                
+            }
+            _pivotPoint.x += .5f;
+            _pivotPoint.y -= .5f;
+
+            float dx = ((float)tile.TileWidth / (float)baseTileWidth) - 1;
 			float dy = ((float)tile.TileHeight / (float)baseTileHeight) - 1;
 
-			int tileId = tileData.tileId;
+            float x0 = ((_meshsize_.x / 2) * -1) - _pivotPoint.x;
+            float y0 = (_meshsize_.y / 2) - _pivotPoint.y + (dy * _meshsize_.y);
+            float x1 = (_meshsize_.x / 2) - _pivotPoint.x + (dx * _meshsize_.x);
+            float y1 = ((_meshsize_.y / 2) * -1) - _pivotPoint.y;
+
+            
+
+
+            int tileId = tileData.tileId;
 			tileId = tileId - tile.FirstId;
 			//int deltaY = tile.TileHeight/baseTileHeight;
 			int tileColCnt = Mathf.CeilToInt (tile.Image.Width / tile.TileWidth);
@@ -267,11 +293,7 @@ namespace TmxCSharp.Renderer
 			float uvY = 1f - (float)(r) * uvPerY;
 			float uvX = (float)(c) * uvPerX;
 
-			float x0 = ((_meshsize_.x / 2) * -1) - _pivotPoint.x;
-			float y0 = (_meshsize_.y / 2) - _pivotPoint.y + (dy * _meshsize_.y);
-			float x1 = (_meshsize_.x / 2) - _pivotPoint.x + (dx * _meshsize_.x);
-			float y1 = ((_meshsize_.y / 2) * -1) - _pivotPoint.y;
-
+			
 			float uvX0;
 			float uvX1;
 			float uvY0;
@@ -293,7 +315,7 @@ namespace TmxCSharp.Renderer
 				uvY1 = uvY - uvPerY;
 			}
 
-			float z = -layerIdx * 0.01f;
+			
 
 			// left, top
 			int vertIdx;
@@ -687,7 +709,7 @@ namespace TmxCSharp.Renderer
 							AddVertex2 (c, r, l, layer.Width, layer.Height, 
 								m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
 								tileData, tmxData.Tile, 
-								vertList, uvList, indexList/*, XYToVertIdx*/);
+								vertList, uvList, indexList/*, XYToVertIdx*/, m_TileMap.TileType);
 							#else
 						AddVertex(c, r, l, layer.Width, layer.Height, 
 								m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
