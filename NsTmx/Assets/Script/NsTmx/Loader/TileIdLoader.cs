@@ -27,6 +27,14 @@ namespace TmxCSharp.Loader
             _expectedIds = tileMapSize.Width * tileMapSize.Height;
         }
 
+		public TileMapSize Size
+		{
+			get
+			{
+				return _size;
+			}
+		}
+
 		public static void SaveToBinary(Stream stream, MapLayer layer, TileMapSize size)
 		{
 			if (stream == null || layer == null || size == null)
@@ -235,7 +243,7 @@ namespace TmxCSharp.Loader
 
 			bool flippedHorizontally = (tileId & flippedHorizontallyFlag) > 0;
 			bool flippedVertically = (tileId & flippedVerticallyFlag) > 0;
-			bool flippedDiagonally = (tileId & flippedDiagonallyFlag) > 0;
+//			bool flippedDiagonally = (tileId & flippedDiagonallyFlag) > 0;
 
 			TileIdData ret = new TileIdData();
 			ret.tileId = (int)(tileId & flipMask);
