@@ -8,6 +8,7 @@ using System.IO;
 using TmxCSharp.Loader;
 using TmxCSharp.Models;
 using XmlParser;
+using Utils;
 
 namespace TmxCSharp.Renderer
 {
@@ -648,9 +649,124 @@ namespace TmxCSharp.Renderer
 			MeshJumpTo (ref view, cam);
 		}
 
+        // ------------------------------------------------分层显示Mesh--------------------------------------------------
+        // 一层一个材质Mesh
+        public void BuildMeshPerLayer(GameObject target, Camera cam = null) {
+            if (m_TileMap == null || !m_TileMap.IsVaild)
+                return;
+            Transform parent = target.transform.FindChild("LayerRoot");
+            if (parent == null) {
+                GameObject root = new GameObject("LayerRoot");
+                parent = root.transform;
+                parent.localScale = Vector3.one;
+                parent.parent = target.transform;
+            }
 
-		// 全部到整Mesh
-		public void BuildAllToMesh (Mesh mesh, GameObject target, Camera cam = null)
+            for (int i = parent.childCount - 1; i >= 0; --i) {
+                var trans = parent.GetChild(i);
+                MeshFilter filter = trans.GetComponent<MeshFilter>();
+                if (filter != null && filter.sharedMesh != null) {
+                    GameObject.Destroy(filter.sharedMesh);
+                    filter.sharedMesh = null;
+                }
+                GameObject.Destroy(trans.gameObject);
+            }
+
+            // 设置顶点
+            List<Vector3> vertList = new List<Vector3>();
+            List<Vector2> uvList = new List<Vector2>();
+            List<int> indexList = new List<int>();
+
+            var matIter = m_TileDataMap.GetEnumerator();
+            while (matIter.MoveNext()) {
+
+                vertList.Clear();
+                uvList.Clear();
+                indexList.Clear();
+
+                TmxTileData tmxData = matIter.Current.Value;
+                if (tmxData == null || tmxData.Tile == null || !tmxData.Tile.IsVaid)
+                    continue;
+
+                for (int l = 0; l < m_TileMap.Layers.Count; ++l) {
+
+                    vertList.Clear();
+                    uvList.Clear();
+                    indexList.Clear();
+
+                    MapLayer layer = m_TileMap.Layers[l];
+                    if (layer == null || !layer.IsVaild)
+                        continue;
+
+                    for (int r = 0; r < layer.Height; ++r) {
+                        for (int c = 0; c < layer.Width; ++c) {
+                            int idx = r * layer.Width + c;
+                            TileIdData tileData = layer.TileIds[idx];
+                            if (!tmxData.Tile.ContainsTile(tileData.tileId))
+                                continue;
+
+                            if (indexList == null)
+                                indexList = new List<int>();
+#if _USE_ADDVERTEX2
+                            AddVertex2(c, r, l, layer.Width, layer.Height,
+                                m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight,
+                                tileData, tmxData.Tile,
+                                vertList, uvList, indexList/*, XYToVertIdx*/, m_TileMap.TileType);
+#else
+						AddVertex(c, r, l, layer.Width, layer.Height, 
+								m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
+								tileData, tmxData.Tile, 
+								vertList, uvList, indexList/*, XYToVertIdx*/);
+#endif
+
+                        }
+                    }
+
+                    if (vertList.Count > 0) {
+                        GameObject gameObj = new GameObject();
+                        var trans = gameObj.transform;
+                        trans.parent = parent;
+                        trans.localScale = Vector3.one;
+                        MeshFilter filter = gameObj.AddComponent<MeshFilter>();
+                        Mesh mesh = new Mesh();
+                        filter.sharedMesh = mesh;
+
+                        // 设置顶点
+                        mesh.SetVertices(vertList);
+                        // 设置UV
+                        mesh.SetUVs(0, uvList);
+                        mesh.subMeshCount = 1;
+                        mesh.SetIndices(indexList.ToArray(), MeshTopology.Quads, 0);
+                       
+                        mesh.RecalculateBounds();
+                        mesh.UploadMeshData(true);
+
+                        MeshRenderer renderer = gameObj.AddComponent<MeshRenderer>();
+                        renderer.sharedMaterial = tmxData.Mat;
+                    }
+
+                }
+
+            }
+            matIter.Dispose();
+
+#if _USE_ADDVERTEX2
+            // 摄影机Size
+
+            if (target != null) {
+
+                Vector3 targetScale = GetTargetScale(cam);
+
+                Transform targetTrans = target.transform;
+                targetTrans.localScale = targetScale;
+            }
+#endif
+        }
+
+        //------------------------------------------------------------------------------------------------------------------------
+
+        // 全部到整Mesh
+        public void BuildAllToMesh (Mesh mesh, GameObject target, Camera cam = null)
 		{
 			if (m_TileMap == null || !m_TileMap.IsVaild || mesh == null)
 				return;
@@ -743,7 +859,7 @@ namespace TmxCSharp.Renderer
 			}
 
 			mesh.RecalculateBounds ();
-			mesh.UploadMeshData (false);
+			mesh.UploadMeshData (true);
 
 			#if _USE_ADDVERTEX2
 			// 摄影机Size
