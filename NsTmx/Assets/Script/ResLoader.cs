@@ -12,7 +12,6 @@ using TmxCSharp.Renderer;
 public class ResLoader: MonoBehaviour, ITmxLoader
 {
 	private TMXRenderer m_Renderer = null;
-	private Mesh m_Mesh = null;
 
 	public bool IsUseAllMesh = true;
 
@@ -91,10 +90,8 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 
 			if (IsUseAllMesh)
 			{
-                /*
-				if (m_Mesh == null)
-					m_Mesh = new Mesh();*/
 				m_Renderer.BuildMeshPerLayer(gameObject, Camera.main);
+				//m_Renderer.BuildAllToMesh(gameObject, Camera.main);
 			}
 			else
 				m_Renderer.MeshJumpTo(Camera.main);
