@@ -859,7 +859,7 @@ namespace TmxCSharp.Renderer
 			}
 
 			mesh.RecalculateBounds ();
-			mesh.UploadMeshData (true);
+			mesh.UploadMeshData (false);
 
 			#if _USE_ADDVERTEX2
 			// 摄影机Size
