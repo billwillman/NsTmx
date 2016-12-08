@@ -492,7 +492,7 @@ namespace TmxCSharp.Renderer
 				Vector2 pos = cam.transform.position * 100f;
 				float orthW = (float)cam.pixelWidth/(float)cam.pixelHeight * ((float)cam.orthographicSize);
 				orthW *= 100f;
-				float scale = m_DesignWidth/orthW;
+//				float scale = m_DesignWidth/orthW;
 
 				float halfW =  m_DesignWidth/2f;
 

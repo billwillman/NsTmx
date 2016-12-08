@@ -430,7 +430,7 @@ namespace TmxCSharp.Renderer
 				GameObject obj = new GameObject ();
 				obj.name = "MeshTitle";
 				obj.SetActive (false);
-				TMXMeshNode script = obj.AddComponent<TMXMeshNode> ();
+				/*TMXMeshNode script = */obj.AddComponent<TMXMeshNode> ();
 				//script.InitBuf (4);
 				//script.IsDestroy = false;
 				var trans = obj.transform;
