@@ -90,7 +90,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 
 			if (IsUseAllMesh)
 			{
-				m_Renderer.BuildMeshPerLayer(gameObject, Camera.main);
+				m_Renderer.BuildMeshPerLayer(Camera.main);
 				//m_Renderer.BuildAllToMesh(gameObject, Camera.main);
 			}
 			else

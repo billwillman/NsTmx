@@ -79,6 +79,8 @@ namespace TmxCSharp.Renderer
 		private void Clear ()
 		{
 			ClearTileData ();
+            ClearAllToMesh(gameObject);
+            ClearMeshPerLayer(gameObject);
 			m_ResRootPath = string.Empty;
 		}
 
@@ -688,8 +690,8 @@ namespace TmxCSharp.Renderer
 		}
 
         // 一层一个材质Mesh
-        public void BuildMeshPerLayer(GameObject target, Camera cam = null) {
-
+        public void BuildMeshPerLayer(Camera cam = null) {
+            GameObject target = gameObject;
 			ClearMeshPerLayer(target);
 			if (m_TileMap == null || !m_TileMap.IsVaild || target == null)
                 return;
