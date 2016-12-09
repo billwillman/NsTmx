@@ -759,11 +759,17 @@ namespace TmxCSharp.Renderer
 
                                     int c = realCol + col;
                                     int r = realRow + row;
-
+#if _USE_ADDVERTEX2
                                     AddVertex2(c, r, l, layer.Width, layer.Height,
                                         m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight,
                                         tileData, tmxData.Tile,
                                         vertList, uvList, indexList/*, XYToVertIdx*/, m_TileMap.TileType);
+#else
+						AddVertex(c, r, l, layer.Width, layer.Height, 
+								m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight, 
+								tileData, tmxData.Tile, 
+								vertList, uvList, indexList/*, XYToVertIdx*/);
+#endif
 
                                 }
                             }
