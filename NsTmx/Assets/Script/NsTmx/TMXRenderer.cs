@@ -734,8 +734,6 @@ namespace TmxCSharp.Renderer
                     float lineX = 1f / (float)layer.Width * (float)perCols;
                     float lineY = 1f / (float)layer.Height * (float)perRows;
 
-                    int maxCell = layer.Height * layer.Width;
-
                     for (int rows = 0; rows < maxRows; ++rows) {
                         int realRow = rows * perRows;
                         for (int cols = 0; cols < maxCols; ++cols) {
