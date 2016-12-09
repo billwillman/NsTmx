@@ -793,7 +793,7 @@ namespace TmxCSharp.Renderer
                                 mesh.SetIndices(indexList.ToArray(), MeshTopology.Quads, 0);
 
                                 mesh.RecalculateBounds();
-                                mesh.UploadMeshData(true);
+                                mesh.UploadMeshData(false);
 
                                 MeshRenderer renderer = gameObj.AddComponent<MeshRenderer>();
                                 renderer.sharedMaterial = tmxData.Mat;
@@ -845,7 +845,7 @@ namespace TmxCSharp.Renderer
                         mesh.SetIndices(indexList.ToArray(), MeshTopology.Quads, 0);
 
                         mesh.RecalculateBounds();
-                        mesh.UploadMeshData(true);
+                        mesh.UploadMeshData(false);
 
                         MeshRenderer renderer = gameObj.AddComponent<MeshRenderer>();
                         renderer.sharedMaterial = tmxData.Mat;
@@ -868,6 +868,9 @@ namespace TmxCSharp.Renderer
                 targetTrans.localScale = targetScale;
             }
 #endif
+
+            // 合并批次, 优化DrawCall
+            StaticBatchingUtility.Combine(parent.gameObject);
         }
 
         //------------------------------------------------------------------------------------------------------------------------
