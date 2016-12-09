@@ -48,8 +48,15 @@ namespace TmxCSharp.Loader
 				for (int x = 0; x < size.Width; x++)
 				{
 					int idx = y * size.Width + x;
-					TileIdData data = layer.TileIds[idx];
-					int tileId = GetTileDataToId(data);
+					int tileId;
+					//if (idx >= layer.TileIds.Count)
+					//{
+					//	tileId = 0;
+					//} else
+					{
+						TileIdData data = layer.TileIds[idx];
+						tileId = GetTileDataToId(data);
+					}
 					FilePathMgr.Instance.WriteInt(stream, tileId);
 				}
 			}
