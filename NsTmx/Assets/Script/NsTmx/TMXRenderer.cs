@@ -1,4 +1,5 @@
 ﻿#define _USE_ADDVERTEX2
+#define _USE_SPLIT_PERLAYER
 
 using System;
 using UnityEngine;
@@ -692,11 +693,11 @@ namespace TmxCSharp.Renderer
         // 一层一个材质Mesh
         public void BuildMeshPerLayer(Camera cam = null) {
             GameObject target = gameObject;
-			ClearMeshPerLayer(target);
-			if (m_TileMap == null || !m_TileMap.IsVaild || target == null)
+            ClearMeshPerLayer(target);
+            if (m_TileMap == null || !m_TileMap.IsVaild || target == null)
                 return;
 
-			Transform parent = InitLayerRoot(target);
+            Transform parent = InitLayerRoot(target);
 
             // 设置顶点
             List<Vector3> vertList = new List<Vector3>();
@@ -724,6 +725,81 @@ namespace TmxCSharp.Renderer
                     if (layer == null || !layer.IsVaild)
                         continue;
 
+#if _USE_SPLIT_PERLAYER
+                    int perRows = (int)(1024f/ m_TileMap.Size.TileHeight);
+                    int perCols = (int)(1024f / m_TileMap.Size.TileWidth);
+                    int maxRows = Mathf.CeilToInt(layer.Height / (float)perRows);
+                    int maxCols = Mathf.CeilToInt(layer.Width / (float)perCols);
+
+                    float lineX = 1f / (float)layer.Width * (float)perCols;
+                    float lineY = 1f / (float)layer.Height * (float)perRows;
+
+                    int maxCell = layer.Height * layer.Width;
+
+                    for (int rows = 0; rows < maxRows; ++rows) {
+                        int realRow = rows * perRows;
+                        for (int cols = 0; cols < maxCols; ++cols) {
+
+                            vertList.Clear();
+                            uvList.Clear();
+                            indexList.Clear();
+
+                            int realCol = cols * perCols;
+                            int startIdx = realRow * layer.Width + realCol;
+                            for (int row = 0; row < perRows; ++row) {
+                                if (row + realRow >= layer.Height)
+                                    break;
+                                for (int col = 0; col < perCols; ++col) {
+                                    if (col + realCol >= layer.Width)
+                                        break;
+                                    int idx = startIdx + row * layer.Width + col;
+                                    TileIdData tileData = layer.TileIds[idx];
+                                    if (!tmxData.Tile.ContainsTile(tileData.tileId))
+                                        continue;
+
+                                    int c = realCol + col;
+                                    int r = realRow + row;
+
+                                    AddVertex2(c, r, l, layer.Width, layer.Height,
+                                        m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight,
+                                        tileData, tmxData.Tile,
+                                        vertList, uvList, indexList/*, XYToVertIdx*/, m_TileMap.TileType);
+
+                                }
+                            }
+
+                            if (vertList.Count > 0) {
+                                string name = string.Format("{0:D}:{1:D}", cols, rows);
+                                GameObject gameObj = new GameObject(name);
+                                var trans = gameObj.transform;
+                                trans.parent = parent;
+                                trans.localScale = Vector3.one;
+                          //      trans.localPosition = new Vector3(cols * lineX, rows * lineY, 0);
+                                MeshFilter filter = gameObj.AddComponent<MeshFilter>();
+                                Mesh mesh = new Mesh();
+                                filter.sharedMesh = mesh;
+
+                                // 设置顶点
+                                mesh.SetVertices(vertList);
+                                // 设置UV
+                                mesh.SetUVs(0, uvList);
+                                mesh.subMeshCount = 1;
+                                mesh.SetIndices(indexList.ToArray(), MeshTopology.Quads, 0);
+
+                                mesh.RecalculateBounds();
+                                mesh.UploadMeshData(true);
+
+                                MeshRenderer renderer = gameObj.AddComponent<MeshRenderer>();
+                                renderer.sharedMaterial = tmxData.Mat;
+                            }
+
+
+                        }
+                    }
+
+#else
+
+
                     for (int r = 0; r < layer.Height; ++r) {
                         for (int c = 0; c < layer.Width; ++c) {
                             int idx = r * layer.Width + c;
@@ -731,8 +807,6 @@ namespace TmxCSharp.Renderer
                             if (!tmxData.Tile.ContainsTile(tileData.tileId))
                                 continue;
 
-                            if (indexList == null)
-                                indexList = new List<int>();
 #if _USE_ADDVERTEX2
                             AddVertex2(c, r, l, layer.Width, layer.Height,
                                 m_TileMap.Size.TileWidth, m_TileMap.Size.TileHeight,
@@ -763,13 +837,14 @@ namespace TmxCSharp.Renderer
                         mesh.SetUVs(0, uvList);
                         mesh.subMeshCount = 1;
                         mesh.SetIndices(indexList.ToArray(), MeshTopology.Quads, 0);
-                       
+
                         mesh.RecalculateBounds();
                         mesh.UploadMeshData(true);
 
                         MeshRenderer renderer = gameObj.AddComponent<MeshRenderer>();
                         renderer.sharedMaterial = tmxData.Mat;
                     }
+#endif
 
                 }
 
@@ -791,7 +866,7 @@ namespace TmxCSharp.Renderer
 
         //------------------------------------------------------------------------------------------------------------------------
 
-		public void ClearAllToMesh(GameObject target)
+        public void ClearAllToMesh(GameObject target)
 		{
 			if (target == null)
 				return;
