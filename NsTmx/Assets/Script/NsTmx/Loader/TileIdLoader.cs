@@ -252,13 +252,21 @@ namespace TmxCSharp.Loader
 			bool flippedVertically = (tileId & flippedVerticallyFlag) > 0;
 //			bool flippedDiagonally = (tileId & flippedDiagonallyFlag) > 0;
 
+			int realTileId = (int)(tileId & flipMask);
+			if (realTileId == 0)
+			{
+				return m_DefaultTileIdData;	
+			}
+
 			TileIdData ret = new TileIdData();
-			ret.tileId = (int)(tileId & flipMask);
+			ret.tileId = realTileId;
 			ret.isFlipX = flippedHorizontally;
 			ret.isFlipY = flippedVertically;
 
 			return ret;
 		}
+
+		private static readonly TileIdData m_DefaultTileIdData = new TileIdData(); 
 
 		private static TileIdData GetTileId(byte[] decompressedData, int tileIndex)
         {
