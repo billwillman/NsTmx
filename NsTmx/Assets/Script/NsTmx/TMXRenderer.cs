@@ -697,9 +697,11 @@ namespace TmxCSharp.Renderer
 			if (parent == null) {
 				GameObject root = new GameObject("LayerRoot");
 				parent = root.transform;
-				parent.localScale = Vector3.one;
-				parent.parent = target.transform;
-			}
+                //parent.parent = target.transform;
+                //   parent.localScale = Vector3.one;
+                //  parent.localPosition = Vector3.zero;
+                parent.SetParent(target.transform, false);
+            }
 
 			return parent;
 		}
@@ -790,10 +792,11 @@ namespace TmxCSharp.Renderer
                                 string name = string.Format("{0:D}:{1:D}", cols, rows);
                                 GameObject gameObj = new GameObject(name);
                                 var trans = gameObj.transform;
-                                trans.parent = parent;
-                                trans.localScale = Vector3.one;
-                          //      trans.localPosition = new Vector3(cols * lineX, rows * lineY, 0);
-                                MeshFilter filter = gameObj.AddComponent<MeshFilter>();
+                                //   trans.parent = parent;
+                                //  trans.localScale = Vector3.one;
+                                trans.SetParent(parent, false);
+                               //      trans.localPosition = new Vector3(cols * lineX, rows * lineY, 0);
+                               MeshFilter filter = gameObj.AddComponent<MeshFilter>();
                                 Mesh mesh = new Mesh();
                                 filter.sharedMesh = mesh;
 

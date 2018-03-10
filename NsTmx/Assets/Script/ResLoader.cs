@@ -77,7 +77,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			Scene = 1;
 		} else
 		{
-			fileName = "tmx/d107.bytes";
+			fileName = "tmx/471_randommap_cavestyle3.bytes";
 			Scene = 0;
 		}
 
@@ -90,7 +90,13 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 
 			if (IsUseAllMesh)
 			{
-				m_Renderer.BuildMeshPerLayer(Camera.main);
+                // 此段代码讲解：UseDesign支持按分辨率自适应，如果不需要或者
+                // 外部代码已经做了自适应，例如相机处理，则设置为false即可
+                // m_Scale是像素和米转换，UNITY坐标是米为单位
+                m_Renderer.m_UseDesign = false;
+                m_Renderer.m_Scale = 0.01f;
+
+                m_Renderer.BuildMeshPerLayer(Camera.main);
                 m_Renderer.fixedTmxMap();
                 //m_Renderer.BuildAllToMesh(gameObject, Camera.main);
             }
