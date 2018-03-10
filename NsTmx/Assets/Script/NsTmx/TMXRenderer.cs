@@ -562,7 +562,21 @@ namespace TmxCSharp.Renderer
 			meshMgr.JumpTo (ref view, m_TileMap, cam);
 		}
 
-		internal void SetTMXMeshManagerScale (TMXMeshManager mgr, Camera cam)
+        public void fixedTmxMap() {
+            var tileMap = this.Tile;
+            if (tileMap != null) {
+                var sz = tileMap.Size;
+                if (sz != null) {
+                    var trans = this.transform;
+                    Vector3 pos = trans.localPosition;
+                    pos.x += (float)sz.TileWidth / 100f;
+                    pos.y -= (float)sz.TileHeight / 100f;
+                    trans.localPosition = pos;
+                }
+            }
+        }
+
+        internal void SetTMXMeshManagerScale (TMXMeshManager mgr, Camera cam)
 		{
 			if (mgr == null || cam == null)
 				return;
