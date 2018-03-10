@@ -96,7 +96,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
                 m_Renderer.m_Scale = 0.01f;
 
                 m_Renderer.BuildMeshPerLayer(Camera.main);
-                m_Renderer.fixedTmxMap();
+             //   m_Renderer.fixedTmxMap();
                 //m_Renderer.BuildAllToMesh(gameObject, Camera.main);
             } else {
                 m_Renderer.m_Scale = 100f;
