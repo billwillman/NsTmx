@@ -88,8 +88,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 			Debug.LogFormat("加载TMX地图时间：{0}", (t1 - t).ToString());
 
 
-			if (IsUseAllMesh)
-			{
+            if (IsUseAllMesh) {
                 // 此段代码讲解：UseDesign支持按分辨率自适应，如果不需要或者
                 // 外部代码已经做了自适应，例如相机处理，则设置为false即可
                 // m_Scale是像素和米转换，UNITY坐标是米为单位
@@ -99,9 +98,11 @@ public class ResLoader: MonoBehaviour, ITmxLoader
                 m_Renderer.BuildMeshPerLayer(Camera.main);
                 m_Renderer.fixedTmxMap();
                 //m_Renderer.BuildAllToMesh(gameObject, Camera.main);
+            } else {
+                m_Renderer.m_Scale = 100f;
+                m_Renderer.m_UseDesign = true;
+                m_Renderer.MeshJumpTo(Camera.main);
             }
-			else
-				m_Renderer.MeshJumpTo(Camera.main);
 
 			float t2 = Time.realtimeSinceStartup;
 			Debug.LogFormat("生成地圖時間：{0}", (t2 - t1).ToString());
