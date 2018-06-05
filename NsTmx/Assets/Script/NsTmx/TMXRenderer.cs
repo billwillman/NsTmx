@@ -182,20 +182,32 @@ namespace TmxCSharp.Renderer
 			float uvY0;
 			float uvY1;
 
+            float deltaX;
+            if (m_IsUseUVLine)
+                deltaX = 1f / (float)tile.Image.Width;
+            else
+                deltaX = 0f;
+
 			if (tileData.isFlipX) {
-				uvX0 = uvX + uvPerX;
-				uvX1 = uvX;
+				uvX0 = uvX + uvPerX - deltaX;
+				uvX1 = uvX + deltaX;
 			} else {
-				uvX0 = uvX;
-				uvX1 = uvX + uvPerX;
+				uvX0 = uvX + deltaX;
+				uvX1 = uvX + uvPerX - deltaX;
 			}
 
-			if (tileData.isFlipY) {
-				uvY0 = uvY - uvPerY;
-				uvY1 = uvY;
+            float deltaY;
+            if (m_IsUseUVLine)
+                deltaY = 1f / (float)tile.Image.Height;
+            else
+                deltaY = 0f;
+
+            if (tileData.isFlipY) {
+				uvY0 = uvY - uvPerY + deltaY;
+				uvY1 = uvY - deltaY;
 			} else {
-				uvY0 = uvY;
-				uvY1 = uvY - uvPerY;
+				uvY0 = uvY - deltaY;
+				uvY1 = uvY - uvPerY + deltaY;
 			}
 
 			int vertIdx = 0;
@@ -1109,6 +1121,8 @@ namespace TmxCSharp.Renderer
 		private float m_DesignWidth = 1280;
 		public int m_DesignHeight = 720;
 		public float m_Scale = 1.0f;
+        // 是否采用UV紧缩的方式修复移动导致的缝隙（建议 UV紧缩开启，地图贴图外扩一像素，采样设置为point）
+        public bool m_IsUseUVLine = false;
 		#endif
 
 		public bool HasCacheMeshNode
