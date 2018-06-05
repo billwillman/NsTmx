@@ -17,3 +17,5 @@ TiledMap by unity
 
 ### 6.TMX导入UNITY工程自动会转成二进制文件，加载地图使用2进制文件
 
+### 7.已经提供修复，TMX地图移动偶现缝隙问题修复方案，请看TMXRenderer.cs中UVLine的注释
+
