@@ -230,6 +230,7 @@ namespace TmxCSharp.Loader
 
 		const uint flippedHorizontallyFlag = 0x80000000;
 		const uint flippedVerticallyFlag = 0x40000000;
+        const uint flippedDiagonallyFlag = 0x20000000;
 
 		public static int GetTileDataToId(TileIdData data)
 		{
@@ -240,17 +241,20 @@ namespace TmxCSharp.Loader
 			if (data.isFlipY)
 				ret |= flippedVerticallyFlag;
 
+            if (data.isRot)
+                ret |= flippedDiagonallyFlag;
+
 			return ((int)ret);
 		}
 
 		public static TileIdData GetTileData(int tileId)
 		{
-			const uint flippedDiagonallyFlag = 0x20000000;
+
 			const uint flipMask = ~(flippedHorizontallyFlag | flippedVerticallyFlag | flippedDiagonallyFlag);
 
 			bool flippedHorizontally = (tileId & flippedHorizontallyFlag) > 0;
 			bool flippedVertically = (tileId & flippedVerticallyFlag) > 0;
-//			bool flippedDiagonally = (tileId & flippedDiagonallyFlag) > 0;
+			bool flippedDiagonally = (tileId & flippedDiagonallyFlag) != 0;
 
 			int realTileId = (int)(tileId & flipMask);
 			if (realTileId == 0)
@@ -262,6 +266,7 @@ namespace TmxCSharp.Loader
 			ret.tileId = realTileId;
 			ret.isFlipX = flippedHorizontally;
 			ret.isFlipY = flippedVertically;
+            ret.isRot = flippedDiagonally;
 
 			return ret;
 		}

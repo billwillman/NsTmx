@@ -128,6 +128,72 @@ namespace TmxCSharp.Renderer
 			}
 		}
 
+        private Vector2 Rotation(Vector2 v, int rotMode, Vector2 center)
+        {
+            switch (rotMode)
+            {
+                case -1:
+                    {
+                        // 旋转-90度
+                        Vector2 orgV = v - center;
+                        Vector2 ret = new Vector2();
+                        ret.x = -orgV.y + center.x;
+                        ret.y = orgV.x + center.y;
+                        return ret;
+                    }
+                case 1:
+                    {
+                        // 旋转90度
+                        Vector2 orgV = v - center;
+                        Vector2 ret = new Vector2();
+                        ret.x = orgV.y + center.x;
+                        ret.y = -orgV.x + center.y;
+                        return ret;
+                    }
+                default:
+                    return v;
+            }
+        }
+
+        private void GetRotMode(float uvX0, float uvX1, float uvY0, float uvY1, ref bool isFlipX, ref bool isFlipY, out int rotMode, out Vector2 rotCenter)
+        {
+            rotCenter.x = uvX0 + (uvX1 - uvX0) / 2f;
+            rotCenter.y = uvY0 + (uvY1 - uvY0) / 2f;
+            rotMode = 0;
+
+            if (!isFlipX && !isFlipY)
+            {
+                // tileData.isRot = false;
+                isFlipY = false;
+                isFlipX = true;
+                rotMode = -1;
+            }
+            else if (isFlipX && isFlipY)
+            {
+                rotMode = 1;
+                isFlipY = false;
+                isFlipX = true;
+            }
+            else
+            {
+                if (isFlipY && !isFlipX)
+                {
+                    // 90度
+                    rotMode = 1;
+                }
+                else if (isFlipX && !isFlipY)
+                {
+                    // 270度
+                    rotMode = -1;
+                };
+
+                isFlipX = false;
+                isFlipY = false;
+            }
+        }
+
+
+
 		private void AddVertex2 (
 
 			int col, int row, 
@@ -188,7 +254,30 @@ namespace TmxCSharp.Renderer
             else
                 deltaX = 0f;
 
-			if (tileData.isFlipX) {
+            float deltaY;
+            if (m_IsUseUVLine)
+                deltaY = 1f / (float)tile.Image.Height;
+            else
+                deltaY = 0f;
+
+            bool isFlipX = tileData.isFlipX;
+            bool isFlipY = tileData.isFlipY;
+
+            int rotMode = 0;
+            Vector2 rotCenter = Vector2.zero;
+            if (tileData.isRot)
+            {
+                uvX0 = uvX + deltaX;
+                uvX1 = uvX + uvPerX - deltaX;
+                uvY0 = uvY - deltaY;
+                uvY1 = uvY - uvPerY + deltaY;
+
+                // 获得旋转类型
+                GetRotMode(uvX0, uvX1, uvY0, uvY1, ref isFlipX, ref isFlipY, out rotMode, out rotCenter);
+            }
+
+            if (isFlipX)
+            {
 				uvX0 = uvX + uvPerX - deltaX;
 				uvX1 = uvX + deltaX;
 			} else {
@@ -196,13 +285,8 @@ namespace TmxCSharp.Renderer
 				uvX1 = uvX + uvPerX - deltaX;
 			}
 
-            float deltaY;
-            if (m_IsUseUVLine)
-                deltaY = 1f / (float)tile.Image.Height;
-            else
-                deltaY = 0f;
-
-            if (tileData.isFlipY) {
+            if (isFlipY)
+            {
 				uvY0 = uvY - uvPerY + deltaY;
 				uvY1 = uvY - deltaY;
 			} else {
@@ -226,6 +310,11 @@ namespace TmxCSharp.Renderer
 			Vector3 vec = new Vector3 (x0, y0, 0);
 			vertList [vertIdx] = vec;
 			Vector2 uv = new Vector2 (uvX0, uvY0);
+            if (tileData.isRot)
+            {
+                // 旋转
+                uv = Rotation(uv, rotMode, rotCenter);
+            }
 			uvList [vertIdx] = uv;
 			indexList [indexIdx] = vertIdx;
 			++vertIdx;
@@ -234,6 +323,11 @@ namespace TmxCSharp.Renderer
 			vec = new Vector3 (x1, y0, 0);
 			vertList [vertIdx] = vec;
 			uv = new Vector2 (uvX1, uvY0);
+            if (tileData.isRot)
+            {
+                // 旋转
+                uv = Rotation(uv, rotMode, rotCenter);
+            }
 			uvList [vertIdx] = uv;
 			indexList [indexIdx] = vertIdx;
 			++vertIdx;
@@ -242,6 +336,11 @@ namespace TmxCSharp.Renderer
 			vec = new Vector3 (x1, y1, 0);
 			vertList [vertIdx] = vec;
 			uv = new Vector2 (uvX1, uvY1);
+            if (tileData.isRot)
+            {
+                // 旋转
+                uv = Rotation(uv, rotMode, rotCenter);
+            }
 			uvList [vertIdx] = uv;
 			indexList [indexIdx] = vertIdx;
 			++vertIdx;
@@ -250,6 +349,11 @@ namespace TmxCSharp.Renderer
 			vec = new Vector3 (x0, y1, 0);
 			vertList [vertIdx] = vec;
 			uv = new Vector2 (uvX0, uvY1);
+            if (tileData.isRot)
+            {
+                // 旋转
+                uv = Rotation(uv, rotMode, rotCenter);
+            }
 			uvList [vertIdx] = uv;
 			indexList [indexIdx] = vertIdx;
 

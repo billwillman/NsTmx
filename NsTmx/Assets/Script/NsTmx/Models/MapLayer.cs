@@ -24,6 +24,12 @@ namespace TmxCSharp.Models
 			set;
 		}
 
+        public bool isRot
+        {
+            get;
+            set;
+        }
+
 		public System.Object userData
 		{
 			get;
