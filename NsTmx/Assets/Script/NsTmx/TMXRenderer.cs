@@ -1002,7 +1002,28 @@ namespace TmxCSharp.Renderer
 
             // 合并批次, 优化DrawCall
             StaticBatchingUtility.Combine(parent.gameObject);
+			BuildCollision (parent);
         }
+
+		private void BuildCollision(Transform layerRoot)
+		{
+			if (layerRoot == null || layerRoot.childCount <= 0)
+				return;
+			var firstNode = layerRoot.GetChild (0);
+			if (firstNode == null)
+				return;
+			
+			var box = this.Collision;
+			if (box == null)
+				return;
+
+			MeshFilter filter = firstNode.GetComponent<MeshFilter> ();
+			if (filter == null || filter.sharedMesh == null)
+				return;
+			var b = filter.sharedMesh.bounds;
+			box.center = b.center;
+			box.size = b.size;
+		}
 
         //------------------------------------------------------------------------------------------------------------------------
 
@@ -1237,10 +1258,23 @@ namespace TmxCSharp.Renderer
 			}
 		}
 
+		protected BoxCollider Collision
+		{
+			get {
+				if (!m_InitCollision) {
+					m_InitCollision = true;
+					m_Collision = GetComponent<BoxCollider> ();
+				}
+				return m_Collision;
+			}
+		}
+
 		private string m_ResRootPath = string.Empty;
 		private TileMap m_TileMap = null;
 		private TMXMeshManager m_MeshMgr = null;
 		private Dictionary<int, TmxTileData> m_TileDataMap = new Dictionary<int, TmxTileData> ();
+		private BoxCollider m_Collision = null;
+		private bool m_InitCollision = false;
 	}
 
 }
