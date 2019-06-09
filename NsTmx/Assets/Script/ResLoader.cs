@@ -14,6 +14,7 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 	private TMXRenderer m_Renderer = null;
 
 	public bool IsUseAllMesh = true;
+	public int TileId = -1;
 
 	void Awake()
 	{
@@ -118,47 +119,75 @@ public class ResLoader: MonoBehaviour, ITmxLoader
 
 	void OnGUI()
 	{
+		bool isEnableClick = true;
+		TileId = -1;
 		
 		if (Input.GetKeyDown (KeyCode.UpArrow)) {
+			isEnableClick = false;
 			GoUp();
 		} else if (Input.GetKeyDown (KeyCode.DownArrow)) {
+			isEnableClick = false;
 			GoDown();
 		} else if (Input.GetKeyDown (KeyCode.LeftArrow)) {
+			isEnableClick = false;
 			GoLeft();
 		} else if (Input.GetKeyDown (KeyCode.RightArrow)) {
+			isEnableClick = false;
 			GoRight();
 		}
 
 		if (GUI.Button(new Rect(0, 0, 100, 100), "分块地图"))
 		{
+			isEnableClick = false;
 			IsUseAllMesh = false;
 			ChangeScene();
 		}
 
 		if (GUI.Button(new Rect(150, 0, 100, 100), "整体地图"))
 		{
+			isEnableClick = false;
 			IsUseAllMesh = true;
 			ChangeScene();
 		}
 
 		if (GUI.Button(new Rect(0, 150, 100, 100), "向上"))
 		{
+			isEnableClick = false;
 			GoUp();
 		}
 
 		if (GUI.Button(new Rect(0, 250, 100, 100), "向下"))
 		{
+			isEnableClick = false;
 			GoDown();
 		}
 
 		if (GUI.Button(new Rect(0, 350, 100, 100), "向左"))
 		{
+			isEnableClick = false;
 			GoLeft();
 		}
 
 		if (GUI.Button(new Rect(0, 450, 100, 100), "向右"))
 		{
+			isEnableClick = false;
 			GoRight();
+		}
+
+		if (isEnableClick && Input.GetMouseButtonDown(0)) {
+			Vector3 mousePt = Input.mousePosition;
+			Camera mainCam = Camera.main;
+			if (mainCam != null) {
+				Ray ray = mainCam.ScreenPointToRay (mousePt);
+				RaycastHit hit;
+				if (Physics.Raycast (ray, out hit) && hit.collider != null) {
+					TMXRenderer renderer = hit.collider.GetComponent<TMXRenderer> ();
+					if (renderer != null) {
+						mousePt = hit.point;
+						int tileId = renderer.GetTileIdByWorldPos (mousePt);
+					}
+				}
+			}
 		}
 	}
 

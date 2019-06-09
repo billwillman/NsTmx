@@ -804,6 +804,8 @@ namespace TmxCSharp.Renderer
 			}
 		}
 
+		private Transform m_LayerRoot = null;
+
 		private Transform InitLayerRoot(GameObject target)
 		{
 			if (target == null)
@@ -818,6 +820,7 @@ namespace TmxCSharp.Renderer
                 //  parent.localPosition = Vector3.zero;
                 parent.SetParent(target.transform, false);
             }
+			m_LayerRoot = parent;
 
 			return parent;
 		}
@@ -1023,6 +1026,23 @@ namespace TmxCSharp.Renderer
 			var b = filter.sharedMesh.bounds;
 			box.center = b.center;
 			box.size = b.size;
+		}
+
+		public int GetTileIdByWorldPos(Vector3 worldPos, int layerIdx = 0)
+		{
+			if (m_LayerRoot == null || layerIdx < 0 || m_TileMap == null || m_TileMap.Layers == null || layerIdx >= m_TileMap.Layers.Count)
+				return -1;
+
+			var layer = m_TileMap.Layers[layerIdx];
+			if (layer == null)
+				return -1;
+			#if _USE_ADDVERTEX2 && _USE_SPLIT_PERLAYER
+			Vector3 localPos = m_LayerRoot.worldToLocalMatrix * worldPos;
+			// 暂时这样，没有写完
+			return -1;
+			#else
+			return -1;
+			#endif 
 		}
 
         //------------------------------------------------------------------------------------------------------------------------
